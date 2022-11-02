@@ -6,7 +6,7 @@ set(CMAKE_EXE_LINKER_FLAGS "-lGL -lGLU -lGLEW -lglfw")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
 
 file(GLOB COMMON Common/*)
-set(SOURCE Application.cpp main.cpp Input.cpp Mesh.cpp Scene1.cpp newCamera.cpp shader.cpp MeshBuilder.cpp)
+set(SOURCE Application.cpp main.cpp Input.cpp Mesh.cpp Scene1.cpp Scene2.cpp newCamera.cpp AACam.cpp shader.cpp MeshBuilder.cpp)
 
 add_library(CommonLib ${COMMON})
 add_executable(GL3D ${SOURCE})

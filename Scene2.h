@@ -1,16 +1,19 @@
-#ifndef SCENE_1_H
-#define SCENE_1_H
+#ifndef SCENE_2_H
+#define SCENE_2_H
 
 #include "Scene.h"
 #include "Mesh.h"
-#include "newCamera.hpp"
+#include "AACam.hpp"
 
-class Scene1 : public Scene
+class Scene2 : public Scene
 {
 public:
 	enum GEOMETRY_TYPE
 	{
 		GEO_AXES,
+		GEO_CIRCLE,
+		GEO_SPHERE,
+		GEO_DONUT,
 		NUM_GEOMETRY,
 	};
 
@@ -20,8 +23,8 @@ public:
 		U_TOTAL,
 	};
 
-	Scene1();
-	~Scene1();
+	Scene2();
+	~Scene2();
 
 	virtual void Init();
 	virtual void Update(double dt);
@@ -37,7 +40,7 @@ private:
 	unsigned m_programID;
 	unsigned m_parameters[U_TOTAL];
 
-	Camera camera;
+	AACam camera;
 	bool projType = 1;
 };
 

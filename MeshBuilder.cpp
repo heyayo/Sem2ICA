@@ -1,6 +1,9 @@
 #include "MeshBuilder.h"
 #include "GL/glew.h"
+#include "Vertex.h"
+#include "gtc/constants.hpp"
 #include <vector>
+#include "glm.hpp"
 
 /******************************************************************************/
 /*!
@@ -99,3 +102,131 @@ Mesh* MeshBuilder::GenerateQuad(const std::string &meshName, Color color, float 
 
 	return mesh;
 }
+
+Mesh* MeshBuilder::GenerateCircle(const std::string &meshName, Color color, float radius, int res)
+{
+	Vertex v;
+	std::vector<Vertex> vbuf;
+	std::vector<GLuint> ibuf;
+	
+	float anglePerSlice = glm::two_pi<float>() / res;
+
+	v.pos.Set(0,0,0);
+	v.color.Set(color.r, color.g, color.b);
+	vbuf.push_back(v);
+
+	for (int i  = 1; i <= res + 1; ++i)
+	{
+		float theta = (i - 1) * anglePerSlice;
+		v.pos.Set(radius * cosf(theta), 0, radius * sinf(theta));
+		v.color.Set(color.r, color.g, color.b);
+
+		vbuf.push_back(v);
+	}
+	for (int i = 1; i <= res + 1; ++i)
+	{
+		ibuf.push_back(i);
+		ibuf.push_back(0);
+	}
+	Mesh* mesh = new Mesh(meshName);
+
+	glBindBuffer(GL_ARRAY_BUFFER, mesh->vertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, vbuf.size() * sizeof(Vertex), &vbuf[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indexBuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, ibuf.size() * sizeof(GLuint), &ibuf[0], GL_STATIC_DRAW);
+
+	mesh->indexSize = ibuf.size();
+	mesh->mode = Mesh::DRAW_TRIANGLE_STRIP;
+	
+	return mesh;
+}
+
+Mesh* MeshBuilder::GenerateSphere(const std::string& meshName, Color color, float radius, int sliceres, int stackres)
+{
+	Vertex v;
+	std::vector<Vertex> vbuf;
+	std::vector<GLuint> ibuf;
+
+	float degPerStack = glm::pi<float>() / stackres;
+	float degPerSLice = glm::two_pi<float>() / sliceres;
+
+	for (int stack = 0; stack < stackres + 1; ++ stack)
+	{
+		float phi = -glm::half_pi<float>() + stack * degPerStack;
+		for (int slice = 0; slice < sliceres + 1; ++slice)
+		{
+			float theta = slice * degPerSLice;
+			v.pos.Set(radius * cos(phi) * cos(theta),
+					radius * sin(phi),
+					radius * cos(phi) * sin(theta));
+			v.color.Set(color.r, color.g, color.b);
+			vbuf.push_back(v);
+		}
+	}
+	for (int i = 0; i < stackres; ++i)
+	{
+		for (int j = 0; j < sliceres + 1; ++j)
+		{
+			ibuf.push_back((stackres+1) * i + j);
+			ibuf.push_back((sliceres+1) * (i + 1) + j);
+		}
+	}
+
+	Mesh* mesh = new Mesh(meshName);
+
+	glBindBuffer(GL_ARRAY_BUFFER, mesh->vertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, vbuf.size() * sizeof(Vertex), &vbuf[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indexBuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, ibuf.size() * sizeof(GLuint), &ibuf[0], GL_STATIC_DRAW);
+
+	mesh->indexSize = ibuf.size();
+	mesh->mode = Mesh::DRAW_TRIANGLE_STRIP;
+	
+	return mesh;
+}
+
+Mesh* MeshBuilder::GenerateDonut(const std::string& meshName, Color color, float major, float minor, int res)
+{
+	Vertex v;
+	std::vector<Vertex> vbuf;
+	std::vector<GLuint> ibuf;
+
+	float degPerStack = glm::two_pi<float>() / res;
+	float degPerSlice = glm::two_pi<float>() / res;
+
+	for (int i = 0; i < res + 1; ++i)
+	{
+		float phi = i * degPerStack;
+		for (int j = 0; j < res + 1; ++j)
+		{
+			float theta = j * degPerSlice;
+			v.pos.Set((major + minor * cos(theta)) * sin(phi),
+					minor * sin(theta),
+					(major + minor * cos(theta)) * cos(phi));
+			v.color.Set(color.r,color.g,color.b);
+			vbuf.push_back(v);
+		}
+	}
+
+	for (int i = 0; i < res; ++i)
+	{
+		for (int j = 0; j <= res + 1; ++j)
+		{
+			ibuf.push_back((res+1) * i + j);
+			ibuf.push_back((res+1) * (i + 1) + j);
+		}
+	}
+
+	Mesh* mesh = new Mesh(meshName);
+
+	glBindBuffer(GL_ARRAY_BUFFER, mesh->vertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, vbuf.size() * sizeof(Vertex), &vbuf[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indexBuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, ibuf.size() * sizeof(GLuint), &ibuf[0], GL_STATIC_DRAW);
+
+	mesh->indexSize = ibuf.size();
+	mesh->mode = Mesh::DRAW_TRIANGLE_STRIP;
+	
+	return mesh;
+}
+

@@ -11,7 +11,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "Scene1.h"
+#include "Scene2.h"
+
+#include "Input.hpp"
 
 GLFWwindow* m_window;
 const unsigned char FPS = 60; // FPS of this game
@@ -33,6 +35,9 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
+
+	Input::GetInstance()->Update(key, action);
+	
 }
 
 void resize_callback(GLFWwindow* window, int w, int h)
@@ -88,7 +93,7 @@ void Application::Init()
 	glfwMakeContextCurrent(m_window);
 
 	//Sets the key callback
-	//glfwSetKeyCallback(m_window, key_callback);
+	glfwSetKeyCallback(m_window, key_callback);
 
 	//Sets the resize callback to handle window resizing
 	glfwSetWindowSizeCallback(m_window, resize_callback);
@@ -108,7 +113,7 @@ void Application::Init()
 void Application::Run()
 {
 	//Main Loop
-	Scene *scene = new Scene1();
+	Scene *scene = new Scene2();
 	scene->Init();
 
 	m_timer.startTimer();    // Start timer to calculate how long it takes to render this frame
@@ -118,6 +123,9 @@ void Application::Run()
 		scene->Render();
 		//Swap buffers
 		glfwSwapBuffers(m_window);
+		
+		Input::GetInstance()->PostUpdate();
+
 		//Get and organize events, like keyboard and mouse input, window resizing, etc...
 		glfwPollEvents();
         m_timer.waitUntil(frameTime);       // Frame rate limiter. Limits each frame to a specified time in ms.   
@@ -129,6 +137,7 @@ void Application::Run()
 
 void Application::Exit()
 {
+	Input::DestroyInstance();
 	//Close OpenGL window and terminate GLFW
 	glfwDestroyWindow(m_window);
 	//Finalize and clean up GLFW

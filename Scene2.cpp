@@ -1,4 +1,4 @@
-#include "Scene1.h"
+#include "Scene2.h"
 #include "GL/glew.h"
 
 #include "ext/matrix_clip_space.hpp"
@@ -7,21 +7,17 @@
 #include "MeshBuilder.h"
 #include "Input.hpp"
 
-Scene1::Scene1()
+Scene2::Scene2()
 {
 }
 
-Scene1::~Scene1()
+Scene2::~Scene2()
 {
 }
 
-void Scene1::Init()
+void Scene2::Init()
 {
-	camera.Init(
-		{4.f,3.f,3.f},
-		{0.f,0.f,0.f},
-		{0.f,1.f,0.f}
-	);
+	camera.init(45.f,45.f,10.f);
 	// Set background color to dark blue
 	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
 
@@ -53,16 +49,20 @@ void Scene1::Init()
 	}
 
 	meshList[GEO_AXES] = MeshBuilder::GenerateAxes("Axes", 10000.f, 10000.f, 10000.f);
+	meshList[GEO_CIRCLE] = MeshBuilder::GenerateCircle("CIRCLE", {255,255,255},1.f,64);
+	meshList[GEO_SPHERE] = MeshBuilder::GenerateSphere("SPHERE", {0,0,255}, 1.f, 64);
+	meshList[GEO_DONUT] = MeshBuilder::GenerateDonut("DONUT", {255,0,0}, 1.f, 0.1f, 64);
 }
 
-void Scene1::Update(double dt)
+void Scene2::Update(double dt)
 {
 	// Check for key press, you can add more for interaction
 	HandleKeyPress();
 
+	camera.update(dt);
 }
 
-void Scene1::Render()
+void Scene2::Render()
 {
 	// Clear color buffer every frame
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -74,22 +74,25 @@ void Scene1::Render()
 	);
 
 	glm::mat4 projection = glm::mat4(1.f);
-	switch (projType)
-	{
-		case 0:
-			projection = glm::ortho(-10.f,10.f,-10.f,10.f,0.1f,1000.f);
-			break;
-		default:
-			projection = glm::perspective(45.f,4.0f/3.0f,0.1f,1000.f);
-	}
+	if (projType)
+		projection = glm::perspective(45.f,4.0f/3.0f,0.1f,1000.f);
+	else
+		projection = glm::ortho(-10.f,10.f,-10.f,10.f,0.1f,1000.f);
 
 	// Setup Model View Projection matrix
+	glm::mat4 model(1.f);
+	glm::mat4 MVP = projection * view * model;
+	glUniformMatrix4fv(m_parameters[U_MVP],1,GL_FALSE,glm::value_ptr(MVP));
+	meshList[GEO_AXES]->Render();
+	//meshList[GEO_CIRCLE]->Render();
+	meshList[GEO_SPHERE]->Render();
+	meshList[GEO_DONUT]->Render();
 
 	// Render objects
 
 }
 
-void Scene1::Exit()
+void Scene2::Exit()
 {
 	// Cleanup VBO here
 	for (int i = 0; i < NUM_GEOMETRY; ++i)
@@ -103,7 +106,7 @@ void Scene1::Exit()
 	glDeleteProgram(m_programID);
 }
 
-void Scene1::HandleKeyPress() 
+void Scene2::HandleKeyPress() 
 {
 	auto in = Input::GetInstance();
 	if (in->IsKeyPressed(GLFW_KEY_1))

@@ -8,7 +8,7 @@ Camera::~Camera() {}
 
 void Camera::Init(const glm::vec3& pos, const glm::vec3& target, const glm::vec3& up)
 {
-	position = pos;
+	this->position = pos;
 	this->target = target;
 	this->up = up;
 }
