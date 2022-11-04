@@ -200,6 +200,8 @@ namespace sdm
 		}
 		~LinkedList()
 		{
+			if (!m_Capacity)
+				return;
 			auto next = m_HEAD;
 			auto curr = m_HEAD;
 			m_HEAD = nullptr;
@@ -363,7 +365,7 @@ namespace sdm
 					prev = prev->next(); // Going to the node behind
 				}
 				auto curr = prev->next(); // Going to the node to delete
-				if (curr->isTail()) // If deleting last node
+				if (curr == m_TAIL) // If deleting last node
 				{ 
 					m_TAIL = prev; // Set tail to behind
 					prev->linkBack(nullptr); // Make node point to nullptr
@@ -387,22 +389,29 @@ namespace sdm
 			if (loc == first()) // Not using isHead() due to Template Considerations
 			{
 				auto temp = m_HEAD;
-				m_HEAD = m_HEAD->next();
-				if constexpr (std::is_same<DNode<Type>,Node>::value)
+				if (!m_HEAD->isTail())
 				{
-					m_HEAD->linkFront(nullptr);
+					m_HEAD = m_HEAD->next();
+					if constexpr (std::is_same<DNode<Type>,Node>::value)
+					{
+						m_HEAD->linkFront(nullptr);
+					}
 				}
 				Type returnval = temp->value();
 				delete temp;
 				return returnval;
 			}
+			bool begun = false;
 			auto prev = m_HEAD; // The node behind
-			for (int i = 1; i < index; ++i)
+			auto curr = m_HEAD; // Going to the node to delete
+			while (curr != loc)
 			{
-				prev = prev->next(); // Going to the node behind
+				if (begun)
+					prev = prev->next();
+				curr = curr->next();
+				begun = true;
 			}
-			auto curr = prev->next(); // Going to the node to delete
-			if (curr->isTail()) // If deleting last node
+			if (curr == m_TAIL) // If deleting last node
 			{ 
 				m_TAIL = prev; // Set tail to behind
 				prev->linkBack(nullptr); // Make node point to nullptr
@@ -420,7 +429,7 @@ namespace sdm
 			return returnval;
 		}
 
-		constexpr friend std::ostream& operator<<(std::ostream& stream, LinkedList& other)
+		constexpr friend std::ostream& operator<<(std::ostream& stream, const LinkedList& other)
 		{
 			auto curr = other.first();
 			while (!curr->isTail())

@@ -33,6 +33,7 @@ void topbar()
 	end;
 }
 
+/*
 void locate(const int rowe)
 {
 	int temp = playerpos;
@@ -79,6 +80,7 @@ void pathing()
 	end;
 	locate(rowc);
 }
+*/
 
 void locator(sdm::DNode<char>* curr)
 {
@@ -102,6 +104,8 @@ void locator(sdm::DNode<char>* curr)
 
 void drawPath()
 {
+	if (path.isEmpty())
+		return;
 	auto curr = path.first();
 	auto start = path.first();
 	int row = 0;
@@ -129,18 +133,53 @@ void drawPath()
 
 void help()
 {
-	print("1->QUIT, 2->LEFT, 3->RIGHT, 4->NEWNODE, 5->DELNODE, POS->" << playerpos);
+	print("1->QUIT, 2->LEFT, 3->RIGHT, 4->NEWNODE, 5->DELNODE, PATHSIZE->" << path.capacity());
 	end;
 }
 
 void extend()
 {
-	path.chainat('w',ppos);
+	if (path.isEmpty())
+	{
+		path.chainfront('S');
+		ppos = path.first();
+		return;
+	}
+	if (ppos->isHead() && ppos->isTail())
+	{ path.chainat('S',ppos); }
+	else
+		path.chainat('w',ppos);
+	if (ppos->next()->isTail())
+	{
+		ppos->value() = ppos->next()->value();
+		ppos->next()->value() = 'E';
+	}
 }
 
 void del()
 {
-	path.detach(playerpos);
+	if (path.isEmpty())
+		return;
+	auto temp = ppos;
+	if (path.capacity() == 1)
+	{
+		ppos = nullptr;
+	}
+	else if (ppos->isTail())
+	{
+		ppos = ppos->prev();
+		ppos->value() = 'E';
+		temp = path.last();
+	}
+	else if (ppos->isHead())
+	{
+		ppos = ppos->next();
+		ppos->value() = 'S';
+		temp = path.first();
+	}
+	else
+		ppos = ppos->next();
+	path.detach(temp);
 }
 
 void query()
@@ -153,10 +192,14 @@ void query()
 			running = false;
 			break;
 		case 2:
+			if (ppos == nullptr)
+				break;
 			if (ppos->prev())
 				ppos = ppos->prev();
 			break;
 		case 3:
+			if (ppos == nullptr)
+				break;
 			if (ppos->next())
 				ppos = ppos->next();
 			break;
@@ -174,7 +217,7 @@ void query()
 int main()
 {
 	path.chainback('S');
-	for (int i = 0; i < 48; ++i)
+	for (int i = 0; i < 3; ++i)
 	{
 		path.chainback('o');
 	}
@@ -186,6 +229,7 @@ int main()
 		drawPath();
 		help();
 		query();
+		system("clear");
 	}
 }
 
