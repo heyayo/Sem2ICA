@@ -6,7 +6,7 @@
 
 static bool running = true;
 static sdm::LinkedList<sdm::DNode,char> path;
-static int playerpos = 0;
+// static int playerpos = 0; Integer Player Position
 static sdm::DNode<char>* ppos;
 
 void topbar()
@@ -33,7 +33,7 @@ void topbar()
 	end;
 }
 
-/*
+/* Old Version using integer player position
 void locate(const int rowe)
 {
 	int temp = playerpos;
@@ -217,7 +217,7 @@ void query()
 int main()
 {
 	path.chainback('S');
-	for (int i = 0; i < 3; ++i)
+	for (int i = 0; i < 48; ++i)
 	{
 		path.chainback('o');
 	}
@@ -229,7 +229,11 @@ int main()
 		drawPath();
 		help();
 		query();
+#ifdef __linux__
 		system("clear");
+#elif _WIN32
+		system("CLS");
+#endif
 	}
 }
 
