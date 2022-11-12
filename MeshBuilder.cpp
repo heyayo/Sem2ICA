@@ -230,3 +230,116 @@ Mesh* MeshBuilder::GenerateDonut(const std::string& meshName, Color color, float
 	return mesh;
 }
 
+Mesh* MeshBuilder::GenerateCube(const std::string& meshName, Color color, float length)
+{
+	Vertex v;
+	std::vector<Vertex> vbuf;
+	std::vector<GLuint> ibuf;
+
+	v.pos.Set(1,1,1); v.color.Set(color.r,color.g,color.b);
+	vbuf.push_back(v);
+	v.pos.Set(-1,1,1); v.color.Set(color.r,color.g,color.b);
+	vbuf.push_back(v);
+	v.pos.Set(1,1,-1); v.color.Set(color.r,color.g,color.b);
+	vbuf.push_back(v);
+	v.pos.Set(-1,1,-1); v.color.Set(color.r,color.g,color.b);
+	vbuf.push_back(v);
+	v.pos.Set(1,-1,1); v.color.Set(color.r,color.g,color.b);
+	vbuf.push_back(v);
+	v.pos.Set(-1,-1,1); v.color.Set(color.r,color.g,color.b);
+	vbuf.push_back(v);
+	v.pos.Set(1,-1,-1); v.color.Set(color.r,color.g,color.b);
+	vbuf.push_back(v);
+	v.pos.Set(-1,-1,-1); v.color.Set(color.r,color.g,color.b);
+	vbuf.push_back(v);
+
+	ibuf = {0,1,2,3,4,5,6,7,0,1,4,5,1,3,5,7,3,2,7,6,2,0,6,4};
+
+	Mesh* mesh = new Mesh(meshName);
+
+	glBindBuffer(GL_ARRAY_BUFFER, mesh->vertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, vbuf.size() * sizeof(Vertex), &vbuf[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indexBuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, ibuf.size() * sizeof(GLuint), &ibuf[0], GL_STATIC_DRAW);
+
+	mesh->indexSize = ibuf.size();
+	mesh->mode = Mesh::DRAW_TRIANGLE_STRIP;
+	
+	return mesh;
+}
+
+Mesh* MeshBuilder::GenerateCylinder(const std::string &meshName, Color color, float res, float depth, float radius)
+{
+	Vertex v;
+	std::vector<Vertex> vertex_buffer_data;
+	std::vector<GLuint> index_buffer_data;
+
+	float angl = glm::two_pi<float>() / res;
+
+	v.pos.Set(0,depth,0); v.color.Set(color.r,color.g,color.b); vertex_buffer_data.push_back(v);
+	for (int i = 1; i <= res; i++)
+	{
+		v.pos.Set(sin(angl * i) * radius,depth,cos(angl * i) * radius); v.color.Set(color.r,color.g,color.b); vertex_buffer_data.push_back(v);
+	}
+	v.pos.Set(0,-depth,0); v.color.Set(color.r,color.g,color.b); vertex_buffer_data.push_back(v);
+	for (int i = 1; i <= res; i++)
+	{
+		v.pos.Set(sin(angl * i) * radius,-depth,cos(angl * i) * radius); v.color.Set(color.r,color.g,color.b); vertex_buffer_data.push_back(v);
+	}
+
+	for (int i = 0; i < res; i++)
+	{
+		if (i < (res - 1))
+		{
+			index_buffer_data.push_back(0);
+			index_buffer_data.push_back(i+1);
+			index_buffer_data.push_back(i+2);
+			index_buffer_data.push_back(res + 1);
+			index_buffer_data.push_back(res + 3 + i);
+			index_buffer_data.push_back(res + 2 + i);
+		}
+		else
+		{
+			index_buffer_data.push_back(0);
+			index_buffer_data.push_back(i + 1);
+			index_buffer_data.push_back(1);
+			index_buffer_data.push_back(res + 1);
+			index_buffer_data.push_back(res + 2);
+			index_buffer_data.push_back(res + 2 + i);
+		}
+	}
+	for (int i = 1; i <= res; i++)
+	{
+		if (i < res)
+		{
+			index_buffer_data.push_back(i);
+			index_buffer_data.push_back(i + res + 1);
+			index_buffer_data.push_back(i + 1);
+			index_buffer_data.push_back(i + 1);
+			index_buffer_data.push_back(i + res + 1);
+			index_buffer_data.push_back((i + res + 1) + 1);
+		}
+		else
+		{	
+			index_buffer_data.push_back(res);
+			index_buffer_data.push_back(res + res + 1);
+			index_buffer_data.push_back(1);
+			index_buffer_data.push_back(1);
+			index_buffer_data.push_back(res + res + 1);
+			index_buffer_data.push_back(res + 2);
+		}
+	}
+
+	Mesh* mesh = new Mesh(meshName);
+
+	glBindBuffer(GL_ARRAY_BUFFER, mesh->vertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, vertex_buffer_data.size() * sizeof(Vertex), &vertex_buffer_data[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indexBuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_buffer_data.size() * sizeof(GLuint), &index_buffer_data[0], GL_STATIC_DRAW);
+
+	mesh->indexSize = index_buffer_data.size();
+	mesh->mode = Mesh::DRAW_TRIANGLES;
+
+	return mesh;
+}
+

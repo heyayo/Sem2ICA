@@ -70,7 +70,7 @@ void AACam::refresh()
 	float z = distance * cosf(glm::radians(phi)) * sinf(glm::radians(theta));
 	position = glm::vec3(x,y,z);
 	target = {};
-	glm::vec3 view = glm::normalize(position - target);
+	glm::vec3 view = glm::normalize(target - position);
 	glm::vec3 right = glm::normalize(glm::cross(view, glm::vec3(0.f,1.f,0.f)));
 	up = glm::normalize(glm::cross(right, view));
 	recalc = false;

@@ -12,6 +12,7 @@
 #include <stdlib.h>
 
 #include "Scene2.h"
+#include "Galaxy.hpp"
 
 #include "Input.hpp"
 
@@ -113,7 +114,7 @@ void Application::Init()
 void Application::Run()
 {
 	//Main Loop
-	Scene *scene = new Scene2();
+	Scene *scene = new Galaxy();
 	scene->Init();
 
 	m_timer.startTimer();    // Start timer to calculate how long it takes to render this frame
