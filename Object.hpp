@@ -5,18 +5,33 @@
 #include "MatrixStack.hpp"
 #include <memory>
 #include "MeshBuilder.h"
-struct Object
+class Object
 {
-	std::shared_ptr<Mesh> mesh;
-	glm::vec3 position;
+	std::unique_ptr<Mesh> mesh;
 	MatrixStack transforms;
+	std::weak_ptr<Object> parent;
 
-	virtual void start() = 0;
-	virtual void update() = 0;
-	void render()
+public:
+	~Object()
 	{
-		glm::mat4 MVP, modelView, inverse;
-		
+		transforms.Clear();
+	}
+	void bindMesh(Mesh* newMesh)
+	{
+		mesh.reset(newMesh);
+	}
+	void setParent(std::shared_ptr<Object> p)
+	{
+		parent = p;
+	}
+	MatrixStack getTransforms()
+	{
+		MatrixStack temp;
+		if (auto p = parent.lock())
+			temp.LoadMatrix(p->getTransforms().Top());
+		else
+			temp.LoadIdentity();
+		temp.MultMatrix(transforms.Top());
 	}
 };
 #endif

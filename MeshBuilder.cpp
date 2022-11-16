@@ -51,6 +51,7 @@ Mesh* MeshBuilder::GenerateAxes(const std::string &meshName, float lengthX, floa
 
 	mesh->indexSize = index_buffer_data.size();
 	mesh->mode = Mesh::DRAW_LINES;
+	mesh->drawMode = GL_LINES;
 
 	return mesh;
 }
@@ -99,6 +100,7 @@ Mesh* MeshBuilder::GenerateQuad(const std::string &meshName, Color color, float 
 
 	mesh->indexSize = index_buffer_data.size();
 	mesh->mode = Mesh::DRAW_TRIANGLES;
+	mesh->drawMode = GL_TRIANGLES;
 
 	return mesh;
 }
@@ -137,6 +139,7 @@ Mesh* MeshBuilder::GenerateCircle(const std::string &meshName, Color color, floa
 
 	mesh->indexSize = ibuf.size();
 	mesh->mode = Mesh::DRAW_TRIANGLE_STRIP;
+	mesh->drawMode = GL_TRIANGLE_STRIP;
 	
 	return mesh;
 }
@@ -182,6 +185,7 @@ Mesh* MeshBuilder::GenerateSphere(const std::string& meshName, Color color, floa
 
 	mesh->indexSize = ibuf.size();
 	mesh->mode = Mesh::DRAW_TRIANGLE_STRIP;
+	mesh->drawMode = GL_TRIANGLE_STRIP;
 	
 	return mesh;
 }
@@ -227,6 +231,7 @@ Mesh* MeshBuilder::GenerateDonut(const std::string& meshName, Color color, float
 
 	mesh->indexSize = ibuf.size();
 	mesh->mode = Mesh::DRAW_TRIANGLE_STRIP;
+	mesh->drawMode = GL_TRIANGLE_STRIP;
 	
 	return mesh;
 }
@@ -265,6 +270,7 @@ Mesh* MeshBuilder::GenerateCube(const std::string& meshName, Color color, float 
 
 	mesh->indexSize = ibuf.size();
 	mesh->mode = Mesh::DRAW_TRIANGLE_STRIP;
+	mesh->drawMode = GL_TRIANGLE_STRIP;
 	
 	return mesh;
 }
@@ -340,6 +346,7 @@ Mesh* MeshBuilder::GenerateCylinder(const std::string &meshName, Color color, fl
 
 	mesh->indexSize = index_buffer_data.size();
 	mesh->mode = Mesh::DRAW_TRIANGLES;
+	mesh->drawMode = GL_TRIANGLES;
 
 	return mesh;
 }
@@ -390,6 +397,7 @@ Mesh *MeshBuilder::GenerateCone(const std::string &meshName, Color color, float 
 
     mesh->indexSize = index_buffer_data.size();
     mesh->mode = Mesh::DRAW_TRIANGLES;
+	mesh->drawMode = GL_TRIANGLES;
 
     return mesh;
 }

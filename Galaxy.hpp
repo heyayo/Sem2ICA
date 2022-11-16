@@ -5,6 +5,7 @@
 #include "AACam.hpp"
 #include "MatrixStack.hpp"
 #include "Light.hpp"
+#include "Renderer.hpp"
 class Galaxy : public Scene
 {
 public:
@@ -48,6 +49,8 @@ public:
 
 private:
 	void HandleKeyPress(double dt);
+
+	Renderer lightRender;
 
 	unsigned m_vertexArrayID;
 	Mesh* meshList[NUM_GEOMETRY];

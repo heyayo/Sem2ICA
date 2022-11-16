@@ -1,2 +1,7 @@
 build/
 GL3D
+.vs
+.idea
+CMakeSettings.json
+Debug/
+GL3D.*

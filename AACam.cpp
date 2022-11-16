@@ -14,6 +14,8 @@ void AACam::init(float phi, float theta, float distance)
 	this->theta = theta;
 	this->distance = distance;
 	this->recalc = true;
+	view = glm::lookAt(position, target, up);
+	projection = glm::perspective(fov, ratio, nearcull, farcull);
 
 	refresh();
 }

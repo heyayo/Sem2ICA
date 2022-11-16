@@ -24,6 +24,7 @@ public:
 	~Mesh();
 	void Render();
 
+	unsigned drawMode;
 	const std::string name;
 	DRAW_MODE mode;
 	unsigned vertexBuffer;
