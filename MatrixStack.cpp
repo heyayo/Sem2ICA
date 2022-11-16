@@ -36,6 +36,11 @@ void MatrixStack::Translate(float translateX, float translateY, float translateZ
 	glm::mat4 mat = glm::translate(glm::mat4(1.f),{translateX,translateY,translateZ});
 	ms.top() = ms.top() * mat;
 }
+void MatrixStack::Translate(glm::vec3 diff)
+{
+	glm::mat4 mat = glm::translate(glm::mat4(1.f),diff);
+	ms.top() = ms.top() * mat;
+}
 void MatrixStack::Frustum(double left, double right, double bottom, double top, double near, double far)
 {
 	glm::mat4 mat = glm::frustum(left,right,bottom,top,near,far);

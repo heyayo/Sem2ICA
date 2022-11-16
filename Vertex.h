@@ -1,6 +1,8 @@
 #ifndef VERTEX_H
 #define VERTEX_H
 
+#include <vec3.hpp>
+
 struct Position
 {
 	float x, y, z;
@@ -17,6 +19,7 @@ struct Vertex
 {
 	Position pos;
 	Color color;
+	glm::vec3 normal;
 };
 
 #endif

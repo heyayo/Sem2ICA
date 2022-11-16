@@ -4,6 +4,7 @@
 #include "Mesh.h"
 #include "AACam.hpp"
 #include "MatrixStack.hpp"
+#include "Light.hpp"
 class Galaxy : public Scene
 {
 public:
@@ -14,12 +15,26 @@ public:
 		GEO_EARTH,
 		GEO_MOON,
 		GEO_CYLINDER,
+		GEO_LIGHT,
 		NUM_GEOMETRY,
 	};
 
 	enum UNIFORM_TYPE
 	{
 		U_MVP = 0,
+		U_MODELVIEW,
+		U_MODELVIEW_INVERSE_TRANSPOSE,
+		U_MATERIAL_AMBIENT,
+		U_MATERIAL_DIFFUSE,
+		U_MATERIAL_SPECULAR,
+		U_MATERIAL_SHININESS,
+		U_LIGHT0_POSITION,
+		U_LIGHT0_COLOR,
+		U_LIGHT0_POWER,
+		U_LIGHT0_KC,
+		U_LIGHT0_KL,
+		U_LIGHT0_KQ,
+		U_LIGHTENABLED,
 		U_TOTAL,
 	};
 
@@ -32,7 +47,7 @@ public:
 	virtual void Exit();
 
 private:
-	void HandleKeyPress();
+	void HandleKeyPress(double dt);
 
 	unsigned m_vertexArrayID;
 	Mesh* meshList[NUM_GEOMETRY];
@@ -45,5 +60,8 @@ private:
 	MatrixStack modelStack, viewStack, projectionStack;
 	float earthRot = 0;
 	float moonRot = 0;
+	void RenderMesh(Mesh* mesh, bool enableLight = true);
+	Light light[1];
+	bool enableLight = true;
 };
 #endif

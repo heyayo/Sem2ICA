@@ -2,6 +2,7 @@
 #define MESH_H
 
 #include <string>
+#include "Material.hpp"
 
 /******************************************************************************/
 /*!
@@ -28,6 +29,7 @@ public:
 	unsigned vertexBuffer;
 	unsigned indexBuffer;
 	unsigned indexSize;
+	Material mat;
 };
 
 #endif

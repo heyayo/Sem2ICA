@@ -160,6 +160,7 @@ Mesh* MeshBuilder::GenerateSphere(const std::string& meshName, Color color, floa
 					radius * sin(phi),
 					radius * cos(phi) * sin(theta));
 			v.color.Set(color.r, color.g, color.b);
+			v.normal = {cosf(phi)*cosf(theta),sinf(phi),cosf(phi)*sinf(theta)};
 			vbuf.push_back(v);
 		}
 	}
@@ -343,3 +344,52 @@ Mesh* MeshBuilder::GenerateCylinder(const std::string &meshName, Color color, fl
 	return mesh;
 }
 
+Mesh *MeshBuilder::GenerateCone(const std::string &meshName, Color color, float res, float depth, float radius)
+{
+    Vertex v;
+    std::vector<Vertex> vertex_buffer_data;
+    std::vector<GLuint> index_buffer_data;
+
+    float angl = glm::two_pi<float>() / res;
+
+    v.pos.Set(0,0,0); v.color.Set(color.r,color.g,color.b); vertex_buffer_data.push_back(v);
+    for (int i = 1; i <= res; i++)
+    {
+        v.pos.Set(sin(angl * i) * radius,0,cos(angl * i) * radius); v.color.Set(color.r,color.g,color.b); vertex_buffer_data.push_back(v);
+    }
+    v.pos.Set(0,depth,0); v.color.Set(color.r,color.g,color.b); vertex_buffer_data.push_back(v);
+
+    for (int i = 0; i < res; i++)
+    {
+        if (i < res-1)
+        {
+            index_buffer_data.push_back(0);
+            index_buffer_data.push_back(i + 2);
+            index_buffer_data.push_back(i + 1);
+            index_buffer_data.push_back(res+1);
+            index_buffer_data.push_back(i+1);
+            index_buffer_data.push_back(i+2);
+        }
+        else
+        {
+            index_buffer_data.push_back(0);
+            index_buffer_data.push_back(1);
+            index_buffer_data.push_back(i+1);
+            index_buffer_data.push_back(res+1);
+            index_buffer_data.push_back(i+1);
+            index_buffer_data.push_back(1);
+        }
+    }
+
+    Mesh* mesh = new Mesh(meshName);
+
+    glBindBuffer(GL_ARRAY_BUFFER, mesh->vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, vertex_buffer_data.size() * sizeof(Vertex), &vertex_buffer_data[0], GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_buffer_data.size() * sizeof(GLuint), &index_buffer_data[0], GL_STATIC_DRAW);
+
+    mesh->indexSize = index_buffer_data.size();
+    mesh->mode = Mesh::DRAW_TRIANGLES;
+
+    return mesh;
+}
