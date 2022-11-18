@@ -1,6 +1,6 @@
 #ifndef SCENE_H
 #define SCENE_H
-#include "Renderer.hpp"
+
 class Scene
 {
 public:

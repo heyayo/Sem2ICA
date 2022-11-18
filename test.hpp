@@ -1,13 +1,8 @@
 #ifndef TEST
 #define TEST
 #include "Object.hpp"
-#include "Actor.hpp"
-struct test : public Actor
+struct test : public Object
 {
-	Object base;
-	Object seg1;
-	Object seg2;
-
 	void start() override;
 	void update() override;
 };

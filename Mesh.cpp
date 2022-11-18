@@ -48,7 +48,12 @@ void Mesh::Render()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)sizeof(Position));
 	glVertexAttribPointer(2,3,GL_FLOAT,GL_FALSE,sizeof(Vertex),(void*)(sizeof(Position) + sizeof(Color)));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-	glDrawElements(drawMode, indexSize, GL_UNSIGNED_INT, 0);
+	if (mode == DRAW_TRIANGLE_STRIP)
+		glDrawElements(GL_TRIANGLE_STRIP, indexSize, GL_UNSIGNED_INT, 0);
+	else if (mode == DRAW_LINES)
+		glDrawElements(GL_LINES, indexSize, GL_UNSIGNED_INT, 0);
+	else
+		glDrawElements(GL_TRIANGLES, indexSize, GL_UNSIGNED_INT, 0);
 
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
