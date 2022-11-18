@@ -3,10 +3,6 @@
 
 #include <vec3.hpp>
 
-struct Normal
-{
-
-};
 struct Position
 {
 	float x, y, z;
