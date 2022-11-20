@@ -12,7 +12,7 @@
 #include <stdlib.h>
 
 #include "Scene2.h"
-#include "Galaxy.hpp"
+#include "ICA.hpp"
 
 #include "Input.hpp"
 
@@ -80,7 +80,7 @@ void Application::Init()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //We don't want the old OpenGL
 
 	//Create a window and create its OpenGL context
-	m_window = glfwCreateWindow(800, 600, "OPENGLFRAMELINUX", NULL, NULL);
+	m_window = glfwCreateWindow(1600, 1200, "OPENGLFRAMELINUX", NULL, NULL);
 
 	//If the window couldn't be created
 	if (!m_window)
@@ -114,7 +114,7 @@ void Application::Init()
 void Application::Run()
 {
 	//Main Loop
-	Scene *scene = new Galaxy();
+	Scene *scene = new ICA();
 	scene->Init();
 
 	m_timer.startTimer();    // Start timer to calculate how long it takes to render this frame

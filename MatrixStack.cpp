@@ -26,9 +26,19 @@ void MatrixStack::Rotate(float degrees, float axisX, float axisY, float axisZ)
 	glm::mat4 mat = glm::rotate(glm::mat4(1.f),glm::radians(degrees),{axisX,axisY,axisZ});
 	ms.top() = ms.top() * mat;
 }
+void MatrixStack::Rotate(float degrees, glm::vec3 axis)
+{
+	glm::mat4 mat = glm::rotate(glm::mat4(1.f),glm::radians(degrees),axis);
+	ms.top() = ms.top() * mat;
+}
 void MatrixStack::Scale(float scaleX, float scaleY, float scaleZ)
 {
 	glm::mat4 mat = glm::scale(glm::mat4(1.f),{scaleX,scaleY,scaleZ});
+	ms.top() = ms.top() * mat;
+}
+void MatrixStack::Scale(glm::vec3 scale)
+{
+	glm::mat4 mat = glm::scale(glm::mat4(1.f),scale);
 	ms.top() = ms.top() * mat;
 }
 void MatrixStack::Translate(float translateX, float translateY, float translateZ)

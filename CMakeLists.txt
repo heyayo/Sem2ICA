@@ -11,9 +11,11 @@ set(CMAKE_GENERATOR_PLATFORM x64)
 find_package(OpenGL REQUIRED)
 endif (WIN32)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR})
 
 file(GLOB COMMON Common/*)
-set(SOURCE Application.cpp main.cpp Mesh.cpp "Input.cpp" Scene1.cpp Scene2.cpp newCamera.cpp AACam.cpp shader.cpp MeshBuilder.cpp MatrixStack.cpp Galaxy.cpp)
+set(SOURCE Application.cpp main.cpp Mesh.cpp "Input.cpp" Scene1.cpp Scene2.cpp newCamera.cpp AACam.cpp shader.cpp MeshBuilder.cpp MatrixStack.cpp ICA.cpp)
 
 add_library(CommonLib ${COMMON})
 add_executable(GL3D ${SOURCE})

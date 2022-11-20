@@ -17,7 +17,9 @@ class MatrixStack
 	void LoadMatrix(const glm::mat4& matrix);
 	void MultMatrix(const glm::mat4& matrix);
 	void Rotate(float degrees, float axisX, float axisY, float axisZ);
+	void Rotate(float degrees, glm::vec3 axis);
 	void Scale(float scaleX, float scaleY, float scaleZ);
+	void Scale(glm::vec3 scale);
 	void Translate(float translateX, float translateY, float translateZ);
 	void Translate(glm::vec3 diff);
 	void Frustum(double left, double right, double bottom, double top, double near, double far);
