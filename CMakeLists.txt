@@ -35,3 +35,5 @@ if (UNIX)
 	target_link_libraries(GL3D PUBLIC ${CMAKE_SOURCE_DIR}/lib/linux/libglfw3.a)
 endif (UNIX)
 
+add_custom_target(run COMMAND GL3D DEPENDS GL3D WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+

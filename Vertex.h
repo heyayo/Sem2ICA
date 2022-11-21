@@ -15,7 +15,7 @@ struct Color
 	Color(float r = 1, float g = 1, float b = 1) { Set(r, g, b); }
 	void Set(float r, float g, float b) { this->r = r; this->g = g; this->b = b; }
 };
-struct normal
+struct Normal
 {
 	glm::vec3 normal;
 	void Set(float x, float y, float z) { normal.x = x; normal.y = y; normal.z = z; }
@@ -24,7 +24,7 @@ struct Vertex
 {
 	Position pos;
 	Color color;
-	normal normal;
+	Normal normal;
 };
 
 #endif

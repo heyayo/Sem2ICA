@@ -151,7 +151,7 @@ void ICA::Render()
 	meshList[GEO_AXES]->Render();
 	// Render objects
 
-#define GUN
+#define PERSON
 
 #ifdef GUN
 	modelStack.PushMatrix(); // GUN
@@ -339,8 +339,55 @@ void ICA::Render()
 	modelStack.PushMatrix(); // Person
 
 	modelStack.PushMatrix(); // Body
-	modelStack.Scale(0.5f, 1.75f, 1.25f);
-	RenderMesh(meshList[GEO_CUBE], true);
+
+	modelStack.PushMatrix(); // Body
+	modelStack.Translate(0,-.24f,0);
+	modelStack.Scale(0.2f,0.5f,0.24f);
+	RenderMesh(meshList[GEO_SPHERE]);
+	modelStack.PopMatrix(); // Body
+
+	// Shoulders
+	modelStack.PushMatrix();
+	modelStack.Translate(0,1.2f,0.6f);
+	modelStack.Rotate(-75,1,0,0);
+	modelStack.Scale(1,0.5f,1);
+	RenderMesh(meshList[GEO_CYLINDER]);
+	modelStack.PopMatrix();
+
+	modelStack.PushMatrix();
+	modelStack.Translate(0,1.2f,-0.6f);
+	modelStack.Rotate(75,1,0,0);
+	modelStack.Scale(1,0.5f,1);
+	RenderMesh(meshList[GEO_CYLINDER]);
+	modelStack.PopMatrix();
+	// Shoulders
+	
+	modelStack.PushMatrix(); // Stomach Plate
+	modelStack.Translate(-0.66f,1.f,0);
+	modelStack.Rotate(180,0,0,1);
+	modelStack.Scale(0.32f,0.68f,0.78f);
+	RenderMesh(meshList[GEO_HALFSPHERE]);
+	modelStack.PopMatrix(); // Stomach Plate
+
+	modelStack.PushMatrix(); // Sides Plates
+	modelStack.Translate(0,0.15f,0.86f);
+	modelStack.Rotate(68,1,0,0);
+	modelStack.Scale(1,0.5f,1.1f);
+	RenderMesh(meshList[GEO_CYLINDER]);
+	modelStack.PopMatrix();
+
+	modelStack.PushMatrix();
+	modelStack.Translate(0,0.15f,-0.86f);
+	modelStack.Rotate(-68,1,0,0);
+	modelStack.Scale(1,0.5f,1.1f);
+	RenderMesh(meshList[GEO_CYLINDER]);
+	modelStack.PopMatrix(); // Sides Plates
+
+	modelStack.PushMatrix();
+	DEBUGTRANSFORM;
+	RenderMesh(meshList[GEO_CYLINDER]);
+	modelStack.PopMatrix();
+
 	modelStack.PopMatrix(); // Body
 
 	modelStack.PushMatrix(); // Neck
@@ -348,46 +395,6 @@ void ICA::Render()
 	modelStack.Scale(0.5f, 1.5f, 0.5f);
 	RenderMesh(meshList[GEO_CONE], true);
 	modelStack.PopMatrix(); // Neck
-
-	modelStack.PushMatrix(); // Right Arm
-	modelStack.Translate(0, 1.5f, 1.25f);
-	// ARM ROTATE modelStack.Rotate(debugRotation, debugRotationAxis);
-	
-	modelStack.PushMatrix();
-	modelStack.Scale(0.25f, 0.25f, 1);
-	modelStack.Translate(0, 0, 1);
-	RenderMesh(meshList[GEO_CUBE]);
-	modelStack.PopMatrix();
-	
-	modelStack.PushMatrix(); // Elbow Down
-	modelStack.Translate(0, 0, 2.f);
-	// modelStack.Rotate(debugRotation, debugRotationAxis);
-	modelStack.Scale(0.2f, 0.15f, 0.85f);
-	modelStack.Translate(0, 0, 1.f);
-	RenderMesh(meshList[GEO_CUBE]);
-	modelStack.PopMatrix(); // Elbow Down
-	
-	modelStack.PopMatrix(); // Right Arm
-
-	modelStack.PushMatrix(); // Left Arm
-	modelStack.Translate(0, 1.5f, -1.25f);
-	// ARM ROTATE modelStack.Rotate(debugRotation, debugRotationAxis);
-
-	modelStack.PushMatrix();
-	modelStack.Scale(0.25f, 0.25f, 1);
-	modelStack.Translate(0, 0, -1);
-	RenderMesh(meshList[GEO_CUBE]);
-	modelStack.PopMatrix();
-
-	modelStack.PushMatrix(); // Elbow Down
-	modelStack.Translate(0, 0, -2.f);
-	modelStack.Rotate(debugRotation, debugRotationAxis);
-	modelStack.Scale(0.2f, 0.15f, 0.85f);
-	modelStack.Translate(0, 0, -1.f);
-	RenderMesh(meshList[GEO_CUBE]);
-	modelStack.PopMatrix(); // Elbow Down
-
-	modelStack.PopMatrix(); // Left Arm
 
 	modelStack.PushMatrix(); // Head
 	modelStack.Translate(0, 2.5f, 0);
