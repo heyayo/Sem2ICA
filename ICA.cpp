@@ -10,7 +10,7 @@
 #include "Input.hpp"
 #include <fstream>
 
-#define DEBUGTRANSFORM modelStack.Translate(debugTranslate); modelStack.Rotate(debugRotation,debugRotationAxis); modelStack.Scale(debugScale);
+#define DT(x) modelStack.Translate(dbt[x].debugTranslate); modelStack.Rotate(debugRotation[x],dbt[x].debugRotationAxis); modelStack.Scale(dbt[x].debugScale);
 
 ICA::ICA()
 {
@@ -114,6 +114,14 @@ glUniform1f(m_parameters[U_LIGHT0_KQ], light[0].Q);
 	meshList[GEO_FACESHIELD]->mat.diffuse = { 0.25f, 0.25f, 0.25f };
 	meshList[GEO_FACESHIELD]->mat.specular = { 10.f, 10.f, 10.f };
 	meshList[GEO_FACESHIELD]->mat.shininess = 10.0f;
+
+	for (int i = 0; i < 10; ++i)
+	{
+		dbt[i].debugTranslate = { 0,0,0 };
+		dbt[i].debugRotationAxis = { 1,1,1 };
+		dbt[i].debugScale = { 1,1,1 };
+		debugRotation[i] = 0;
+	}
 }
 
 void ICA::Update(double dt)
@@ -152,11 +160,13 @@ void ICA::Render()
 	// Render objects
 
 #define PERSON
+#define SHOTGUN
 
-#ifdef RIFLE
+#ifdef SHOTGUN
 
 	modelStack.PushMatrix();
-	DEBUGTRANSFORM;
+	//modelStack.Translate(-4.5f, 1.25f, 0);
+	DT(0);
 	{
 		modelStack.PushMatrix();
 		modelStack.Rotate(90,0,0,1);
@@ -390,9 +400,12 @@ void ICA::Render()
 	modelStack.PopMatrix(); // GUN
 #endif
 
+	float walk = sin(walkCycle) * 30;
+
 #ifdef PERSON
 
 	modelStack.PushMatrix(); // Person
+	DT(1);
 
 	modelStack.PushMatrix(); // Body
 
@@ -509,7 +522,7 @@ void ICA::Render()
 
 	modelStack.PushMatrix(); // LLegBase
 	modelStack.Translate(0, -1.f, -0.75f);
-	// modelStack.Rotate(debugRotation, debugRotationAxis);
+	modelStack.Rotate(-walk, 0, 0, 1);
 	modelStack.Translate(0, -1.f, 0);
 
 	modelStack.PushMatrix(); // KneeAbove
@@ -527,6 +540,7 @@ void ICA::Render()
 
 	modelStack.PushMatrix(); // Knee Pad
 	modelStack.Translate(0, -1.6f, 0);
+	modelStack.Rotate(walk, 0, 0, 1);
 	
 	modelStack.PushMatrix();
 	modelStack.Scale(0.5f, 0.625f, 0.5f);
@@ -542,6 +556,7 @@ void ICA::Render()
 
 	modelStack.PushMatrix(); // Lower Leg
 	modelStack.Translate(0, -2.f, 0);
+	modelStack.Rotate(walk, 0, 0, 1);
 	//modelStack.Rotate(debugRotation, debugRotationAxis);
 
 	modelStack.PushMatrix();
@@ -554,6 +569,7 @@ void ICA::Render()
 
 	modelStack.PushMatrix(); // LFoot
 	modelStack.Translate(0, -4.3f, 0);
+	modelStack.Rotate(walk, 0, 0, 1);
 	//modelStack.Rotate(debugRotation, debugRotationAxis);
 
 	modelStack.PushMatrix();
@@ -570,7 +586,7 @@ void ICA::Render()
 
 	modelStack.PushMatrix(); // RLegBase
 	modelStack.Translate(0, -1.f, 0.75f);
-	//modelStack.Rotate(debugRotation, debugRotationAxis);
+	modelStack.Rotate(walk, 0,0,1);
 	modelStack.Translate(0, -1.f, 0);
 
 	modelStack.PushMatrix(); // KneeAbove
@@ -583,6 +599,7 @@ void ICA::Render()
 
 	modelStack.PushMatrix(); // Knee Pad
 	modelStack.Translate(0, -1.6f, 0);
+	modelStack.Rotate(-walk, 0, 0, 1);
 
 	modelStack.PushMatrix();
 	modelStack.Scale(0.5f, 0.625f, 0.5f);
@@ -598,6 +615,7 @@ void ICA::Render()
 
 	modelStack.PushMatrix(); // Lower Leg
 	modelStack.Translate(0, -2.f, 0);
+	modelStack.Rotate(-walk, 0, 0, 1);
 	//modelStack.Rotate(debugRotation, debugRotationAxis);
 
 	modelStack.PushMatrix();
@@ -610,6 +628,7 @@ void ICA::Render()
 
 	modelStack.PushMatrix(); // RFoot
 	modelStack.Translate(0, -4.3f, 0);
+	modelStack.Rotate(-walk, 0, 0, 1);
 	//modelStack.Rotate(debugRotation, debugRotationAxis);
 
 	modelStack.PushMatrix();
@@ -768,22 +787,25 @@ void ICA::HandleKeyPress(double dt)
 	light[0].position += delta;
     if (in->IsKeyPressed(GLFW_KEY_KP_1))
     {
-        debug = &debugTranslate;
+        debug = &dbt[dbtindex].debugTranslate;
         std::cout << "DEBUGGING TRANSLATE" << std::endl;
-        std::cout << debugTranslate.x << '|' << debugTranslate.y << '|' << debugTranslate.z << std::endl;
-    }
+        std::cout << dbt[dbtindex].debugTranslate.x << '|' << dbt[dbtindex].debugTranslate.y << '|' << dbt[dbtindex].debugTranslate.z << std::endl;
+		std::cout << "INDEX: " << dbtindex << std::endl;
+	}
     if (in->IsKeyPressed(GLFW_KEY_KP_2))
     {
-        debug = &debugRotationAxis;
+        debug = &dbt[dbtindex].debugRotationAxis;
         std::cout << "DEBUGGING ROTATION" << std::endl;
-        std::cout << debugRotationAxis.x << '|' << debugRotationAxis.y << '|' << debugRotationAxis.z << ',' << debugRotation << std::endl;
-    }
+		std::cout << dbt[dbtindex].debugRotationAxis.x << '|' << dbt[dbtindex].debugRotationAxis.y << '|' << dbt[dbtindex].debugRotationAxis.z << ',' << debugRotation[dbtindex] << std::endl;
+		std::cout << "INDEX: " << dbtindex << std::endl;
+	}
     if (in->IsKeyPressed(GLFW_KEY_KP_3))
     {
-        debug = &debugScale;
+        debug = &dbt[dbtindex].debugScale;
         std::cout << "DEBUGGING SCALE" << std::endl;
-        std::cout << debugScale.x << '|' << debugScale.y << '|' << debugScale.z << std::endl;
-    }
+        std::cout << dbt[dbtindex].debugScale.x << '|' << dbt[dbtindex].debugScale.y << '|' << dbt[dbtindex].debugScale.z << std::endl;
+		std::cout << "INDEX: " << dbtindex << std::endl;
+	}
     if (in->IsKeyDown(GLFW_KEY_KP_7))
         debug->x += dt;
     if (in->IsKeyDown(GLFW_KEY_KP_8))
@@ -797,20 +819,35 @@ void ICA::HandleKeyPress(double dt)
     if (in->IsKeyDown(GLFW_KEY_KP_6))
         debug->z -= dt;
 	if (in->IsKeyDown(GLFW_KEY_KP_ADD))
-		debugRotation += dt*10;
+		debugRotation[dbtindex] += dt*10;
 	if (in->IsKeyDown(GLFW_KEY_KP_SUBTRACT))
-		debugRotation -= dt*10;
+		debugRotation[dbtindex] -= dt*10;
     if (in->IsKeyPressed(GLFW_KEY_ENTER))
     {
         std::cout << "PRINTED SNAPSHOT" << std::endl;
         std::ofstream debugoutput;
 		debugoutput.open("SNAPSHOT.txt");
-        debugoutput << "TRANSLATION: " << debugTranslate.x << '|' << debugTranslate.y << '|' << debugTranslate.z << std::endl;
-        debugoutput << "ROTATIONAXIS: " << debugRotationAxis.x << '|' << debugRotationAxis.y << '|' << debugRotationAxis.z << ',' << debugRotation << std::endl;
-        debugoutput << "SCALE: " << debugScale.x << '|' << debugScale.y << '|' << debugScale.z << std::endl;
+		for (int i = 0; i < 10; ++i)
+		{
+        debugoutput << "TRANSLATION: " << dbt[i].debugTranslate.x << '|' << dbt[i].debugTranslate.y << '|' << dbt[i].debugTranslate.z << std::endl;
+        debugoutput << "ROTATIONAXIS: " << dbt[i].debugRotationAxis.x << '|' << dbt[i].debugRotationAxis.y << '|' << dbt[i].debugRotationAxis.z << ',' << debugRotation[i] << std::endl;
+        debugoutput << "SCALE: " << dbt[i].debugScale.x << '|' << dbt[i].debugScale.y << '|' << dbt[i].debugScale.z << std::endl;
+		}
         debugoutput.close();
     }
-	debugRotationAxis = glm::clamp(debugRotationAxis, { 0,0,0 }, { 1,1,1 });
+	dbt[dbtindex].debugRotationAxis = glm::clamp(dbt[dbtindex].debugRotationAxis, { 0,0,0 }, { 1,1,1 });
+	if (in->IsKeyPressed(GLFW_KEY_KP_MULTIPLY))
+	{
+		dbtindex < 9 ? ++dbtindex : dbtindex;
+		std::cout << "INDEX: " << dbtindex << std::endl;
+	}
+	if (in->IsKeyPressed(GLFW_KEY_KP_DIVIDE))
+	{
+		dbtindex > 0 ? --dbtindex : dbtindex;
+		std::cout << "INDEX: " << dbtindex << std::endl;
+	}
+	if (in->IsKeyDown(GLFW_KEY_E))
+		walkCycle += 0.1f;
 }
 
 void ICA::RenderMesh(Mesh* mesh, bool enableLight)

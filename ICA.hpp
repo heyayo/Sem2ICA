@@ -49,6 +49,14 @@ public:
 	virtual void Exit();
 
 private:
+
+	struct DEBUGTRANSFORMS
+	{
+		glm::vec3 debugTranslate = {0,0,0};
+		glm::vec3 debugRotationAxis = {1,1,1};
+		glm::vec3 debugScale = {1,1,1};
+	};
+
 	void HandleKeyPress(double dt);
 
 	unsigned m_vertexArrayID;
@@ -63,10 +71,10 @@ private:
 	void RenderMesh(Mesh* mesh, bool enableLight = true);
 	Light light[1];
 	bool enableLight = true;
-    glm::vec3 debugTranslate = {0,0,0};
-    glm::vec3 debugRotationAxis = {1,1,1};
-    glm::vec3 debugScale = {1,1,1};
-    float debugRotation = 0;
-    glm::vec3* debug = &debugTranslate;
+    float debugRotation[10];
+	DEBUGTRANSFORMS dbt[10];
+	unsigned dbtindex = 0;
+	float walkCycle = 0;
+    glm::vec3* debug = &dbt[0].debugTranslate;
 };
 #endif
