@@ -75,6 +75,9 @@ private:
 	DEBUGTRANSFORMS dbt[10];
 	unsigned dbtindex = 0;
 	float walkCycle = 0;
+	glm::vec3 playerPos{0,0,0};
+	float playerRotate = 0;
+	float playerDist = 0;
     glm::vec3* debug = &dbt[0].debugTranslate;
 };
 #endif

@@ -48,12 +48,12 @@ void AACam::update(double delta)
 		phi -= ROTATE_SPEED * static_cast<float>(delta);
 		recalc = true;
 	}
-	else if (i->IsKeyDown(GLFW_KEY_W))
+	else if (i->IsKeyDown(GLFW_KEY_Z))
 	{
 		distance -= ZOOM_SPEED * static_cast<float>(delta);
 		recalc = true;
 	}
-	else if (i->IsKeyDown(GLFW_KEY_S))
+	else if (i->IsKeyDown(GLFW_KEY_X))
 	{
 		distance += ZOOM_SPEED * static_cast<float>(delta);
 		recalc = true;

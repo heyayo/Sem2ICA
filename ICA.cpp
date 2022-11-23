@@ -165,8 +165,9 @@ void ICA::Render()
 #ifdef SHOTGUN
 
 	modelStack.PushMatrix();
-	//modelStack.Translate(-4.5f, 1.25f, 0);
-	DT(0);
+	modelStack.Translate(playerPos);
+	modelStack.Rotate(playerRotate,0,1,0);
+	modelStack.Translate(-3.2f, 1.225f, 0);
 	{
 		modelStack.PushMatrix();
 		modelStack.Rotate(90,0,0,1);
@@ -405,304 +406,323 @@ void ICA::Render()
 #ifdef PERSON
 
 	modelStack.PushMatrix(); // Person
-	DT(1);
+	modelStack.Translate(playerPos);
+	modelStack.Rotate(playerRotate,0,1,0);
+	{
+		modelStack.PushMatrix(); // Body
+		{
+			modelStack.PushMatrix(); // Body
+			modelStack.Translate(0,-.24f,0);
+			modelStack.Scale(0.2f,0.5f,0.24f);
+			RenderMesh(meshList[GEO_SPHERE]);
+			modelStack.PopMatrix(); // Body
 
-	modelStack.PushMatrix(); // Body
+			// Shoulders
+			modelStack.PushMatrix();
+			modelStack.Translate(0,1.2f,0.6f);
+			modelStack.Rotate(-75,1,0,0);
+			modelStack.Scale(1,0.5f,1);
+			RenderMesh(meshList[GEO_CYLINDER]);
+			modelStack.PopMatrix();
 
-	modelStack.PushMatrix(); // Body
-	modelStack.Translate(0,-.24f,0);
-	modelStack.Scale(0.2f,0.5f,0.24f);
-	RenderMesh(meshList[GEO_SPHERE]);
-	modelStack.PopMatrix(); // Body
+			modelStack.PushMatrix();
+			modelStack.Translate(0,1.2f,-0.6f);
+			modelStack.Rotate(75,1,0,0);
+			modelStack.Scale(1,0.5f,1);
+			RenderMesh(meshList[GEO_CYLINDER]);
+			modelStack.PopMatrix();
+			// Shoulders
 
-	// Shoulders
-	modelStack.PushMatrix();
-	modelStack.Translate(0,1.2f,0.6f);
-	modelStack.Rotate(-75,1,0,0);
-	modelStack.Scale(1,0.5f,1);
-	RenderMesh(meshList[GEO_CYLINDER]);
-	modelStack.PopMatrix();
+			modelStack.PushMatrix(); // Right Arm
+			modelStack.Translate(0, 1.f, 0.7f);
+			modelStack.Rotate(-72.f,0,1,0);
+			{
+				
+				modelStack.PushMatrix();
+				modelStack.Translate(0,0,1.1f);
+				modelStack.Rotate(90, 1, 0, 0);
+				modelStack.Scale(0.35f, 2.f, 0.35f);
+				RenderMesh(meshList[GEO_CYLINDER]);
+				modelStack.PopMatrix();
 
-	modelStack.PushMatrix();
-	modelStack.Translate(0,1.2f,-0.6f);
-	modelStack.Rotate(75,1,0,0);
-	modelStack.Scale(1,0.5f,1);
-	RenderMesh(meshList[GEO_CYLINDER]);
-	modelStack.PopMatrix();
-	// Shoulders
+				modelStack.PushMatrix(); // Lower Arm
+				modelStack.Translate(0, 0, 2.1f);
+				modelStack.Rotate(-56.f,0,1,0);
+				{
+					modelStack.PushMatrix();
+					modelStack.Rotate(90,1,0,0);
+					modelStack.Scale(0.2f, 1.6f, 0.2f);
+					modelStack.Translate(0, 0.5f, 0);
+					RenderMesh(meshList[GEO_CYLINDER]);
+					modelStack.PopMatrix();
 
-	modelStack.PushMatrix(); // Right Arm
-	modelStack.Translate(0, 1.f, 0.7f);
-	modelStack.Rotate(90, 1, 0, 0);
-	
-	modelStack.PushMatrix();
-	modelStack.Translate(0,1.1f,0);
-	modelStack.Scale(0.35f, 2.f, 0.35f);
-	RenderMesh(meshList[GEO_CYLINDER]);
-	modelStack.PopMatrix();
+					modelStack.PushMatrix(); // Hands
+					modelStack.Translate(0,5e-07,1.6f);
+					modelStack.Rotate(-27.5f,0,0,1);
+					{
+						modelStack.PushMatrix();
+						modelStack.Rotate(90,1,0,0);
+						modelStack.Scale(0.065f,0.37f,0.32f);
+						modelStack.Translate(0,1,0);
+						RenderMesh(meshList[GEO_CUBE]);
+						modelStack.PopMatrix();
+					}
+					modelStack.PopMatrix(); // Hands
+				}
+				modelStack.PopMatrix(); // Lower Arm
+			}
+		modelStack.PopMatrix(); // Right Arm
 
-	modelStack.PushMatrix(); // Lower Arm
-	modelStack.Translate(0, 2.1f, 0);
+		modelStack.PushMatrix(); // Left Arm
+		modelStack.Translate(0, 1.f, -0.7f);
+		modelStack.Rotate(52,0,1,0);
+		{
+			modelStack.PushMatrix();
+			modelStack.Translate(0, 0, -1.1f);
+			modelStack.Rotate(-90, 1, 0, 0);
+			modelStack.Scale(0.35f, 2.f, 0.35f);
+			RenderMesh(meshList[GEO_CYLINDER]);
+			modelStack.PopMatrix();
 
-	modelStack.PushMatrix();
-	modelStack.Scale(0.2f, 1.6f, 0.2f);
-	modelStack.Translate(0, .5f, 0);
-	RenderMesh(meshList[GEO_CYLINDER]);
-	modelStack.PopMatrix();
+			modelStack.PushMatrix(); // Lower Arm
+			modelStack.Translate(0, 0, -2.1f);
+			modelStack.Rotate(110,0,1,0.136f);
+			{
+				modelStack.PushMatrix();
+				modelStack.Rotate(-90,1,0,0);
+				modelStack.Scale(0.2f, 1.6f, 0.2f);
+				modelStack.Translate(0, .5f, 0);
+				RenderMesh(meshList[GEO_CYLINDER]);
+				modelStack.PopMatrix();
 
-	modelStack.PushMatrix(); // Hands
-	modelStack.Translate(0,1.6f,5e-07);
+				modelStack.PushMatrix(); // Hands
+				modelStack.Translate(0,5e-07,-1.6f);
+				modelStack.Rotate(-32.f,0,0,1);
+				{
+					modelStack.PushMatrix();
+					modelStack.Scale(0.065f,0.37f,0.32f);
+					modelStack.Translate(0,0,-1.f);
+					RenderMesh(meshList[GEO_CUBE]);
+					modelStack.PopMatrix();
+				}
+				modelStack.PopMatrix(); // Hands
+			}
+			modelStack.PopMatrix(); // Lower Arm
+		}
+		modelStack.PopMatrix(); // Left Arm
 
-	modelStack.PushMatrix();
-	modelStack.Scale(0.065f,0.37f,0.32f);
-	modelStack.Translate(0,1,0);
-	RenderMesh(meshList[GEO_CUBE]);
-	modelStack.PopMatrix();
+		modelStack.PushMatrix(); // Stomach Plate
+		modelStack.Translate(-0.66f,1.f,0);
+		modelStack.Rotate(180,0,0,1);
+		modelStack.Scale(0.32f,0.68f,0.78f);
+		RenderMesh(meshList[GEO_HALFSPHERE]);
+		modelStack.PopMatrix(); // Stomach Plate
 
-	modelStack.PopMatrix(); // Hands
+		modelStack.PushMatrix(); // Sides Plates
+		modelStack.Translate(0, 0.765f, 0.54f);
+		modelStack.Rotate(60, 1, 0, 0);
+		modelStack.Scale(0.7f, 0.55f, 0.85f);
+		RenderMesh(meshList[GEO_CYLINDER]);
+		modelStack.PopMatrix();
 
-	modelStack.PopMatrix(); // Lower Arm
+		modelStack.PushMatrix();
+		modelStack.Translate(0, 0.765f, -0.54f);
+		modelStack.Rotate(-60, 1, 0, 0);
+		modelStack.Scale(0.7f, 0.55f, 0.85f);
+		RenderMesh(meshList[GEO_CYLINDER]);
+		modelStack.PopMatrix(); // Sides Plates
 
-	modelStack.PopMatrix(); // Right Arm
-	
-	modelStack.PushMatrix(); // Left Arm
-	modelStack.Translate(0, 1.f, -0.7f);
-	modelStack.Rotate(-90, 1, 0, 0);
+		modelStack.PushMatrix(); // LLegBase
+		modelStack.Translate(0, -1.f, -0.75f);
+		modelStack.Rotate(-walk, 0, 0, 1);
+		modelStack.Translate(0, -1.f, 0);
+		{
+			modelStack.PushMatrix(); // KneeAbove
+			modelStack.Translate(0, -1.f, 0);
+			modelStack.Scale(0.6f, 0.6f, 0.66f);
+			RenderMesh(meshList[GEO_CYLINDER]);
+			modelStack.PopMatrix(); // KneeAbove
 
-	modelStack.PushMatrix();
-	modelStack.Translate(0, 1.1f, 0);
-	modelStack.Scale(0.35f, 2.f, 0.35f);
-	RenderMesh(meshList[GEO_CYLINDER]);
-	modelStack.PopMatrix();
+			modelStack.PushMatrix(); // LLeg
+			modelStack.Scale(0.5f, 2.5f, 0.5f);
+			RenderMesh(meshList[GEO_CYLINDER]);
+			modelStack.PopMatrix(); // LLeg
 
-	modelStack.PushMatrix(); // Lower Arm
-	modelStack.Translate(0, 2.1f, 0);
+			modelStack.PushMatrix(); // Knee Below
+			{
 
-	modelStack.PushMatrix();
-	modelStack.Scale(0.2f, 1.6f, 0.2f);
-	modelStack.Translate(0, .5f, 0);
-	RenderMesh(meshList[GEO_CYLINDER]);
-	modelStack.PopMatrix();
+				modelStack.PushMatrix(); // Knee Pad
+				modelStack.Translate(0, -1.6f, 0);
+				modelStack.Rotate(walk, 0, 0, 1);
+				{
+					modelStack.PushMatrix();
+					modelStack.Scale(0.5f, 0.625f, 0.5f);
+					RenderMesh(meshList[GEO_CYLINDER]);
+					modelStack.PopMatrix();
 
-	modelStack.PushMatrix(); // Hands
-	modelStack.Translate(0,1.6f,5e-07);
+					modelStack.PushMatrix();
+					modelStack.Translate(-0.425f,0,0);
+					modelStack.Rotate(90, 0, 0, 1);
+					modelStack.Scale(0.37f, 0.2f, 0.42f);
+					RenderMesh(meshList[GEO_HALFSPHERE]);
+					modelStack.PopMatrix();
 
-	modelStack.PushMatrix();
-	modelStack.Scale(0.065f,0.37f,0.32f);
-	modelStack.Translate(0,1,0);
-	RenderMesh(meshList[GEO_CUBE]);
-	modelStack.PopMatrix();
+					modelStack.PushMatrix(); // Lower Leg
+					//modelStack.Translate(0, -1.5f, 0);
+					modelStack.Rotate(-walk/2, 0, 0, 1);
+					//modelStack.Rotate(debugRotation, debugRotationAxis);
+					{
+						modelStack.PushMatrix();
+						modelStack.Translate(0, -1.1f, 0);
+						modelStack.Scale(0.35f, 2.4f, 0.35f);
+						RenderMesh(meshList[GEO_CYLINDER]);
+						modelStack.PopMatrix();
 
-	modelStack.PopMatrix(); // Hands
-	
-	modelStack.PopMatrix(); // Lower Arm
+						modelStack.PushMatrix(); // LFoot
+						modelStack.Translate(0, -2.5f, 0);
+						modelStack.Rotate(-walk, 0, 0, 1);
+						//modelStack.Rotate(debugRotation, debugRotationAxis);
+						{
+							modelStack.PushMatrix();
+							modelStack.Translate(-0.5f, 0, 0);
+							modelStack.Scale(1.f, 0.35f, 0.35f);
+							RenderMesh(meshList[GEO_CUBE]);
+							modelStack.PopMatrix();
+						}
+						modelStack.PopMatrix(); // LFoot
+					}
+					modelStack.PopMatrix(); // Lower Leg
+				}
+				modelStack.PopMatrix(); // Knee Below
+			}
+			modelStack.PopMatrix(); // Knee Pad
+		}
+		modelStack.PopMatrix(); // LLegBase
 
-	modelStack.PopMatrix(); // Left Arm
+		modelStack.PushMatrix(); // RLegBase
+		modelStack.Translate(0, -1.f, 0.75f);
+		modelStack.Rotate(walk, 0,0,1);
+		modelStack.Translate(0, -1.f, 0);
+		{
+			modelStack.PushMatrix(); // KneeAbove
+			modelStack.Translate(0, -1.f, 0);
+			modelStack.Scale(0.6f, 0.6f, 0.66f);
+			RenderMesh(meshList[GEO_CYLINDER]);
+			modelStack.PopMatrix(); // KneeAbove
 
-	modelStack.PushMatrix(); // Stomach Plate
-	modelStack.Translate(-0.66f,1.f,0);
-	modelStack.Rotate(180,0,0,1);
-	modelStack.Scale(0.32f,0.68f,0.78f);
-	RenderMesh(meshList[GEO_HALFSPHERE]);
-	modelStack.PopMatrix(); // Stomach Plate
+			modelStack.PushMatrix(); // Knee Below
+			{
+				modelStack.PushMatrix(); // Knee Pad
+				modelStack.Translate(0, -1.6f, 0);
+				modelStack.Rotate(-walk, 0, 0, 1);
+				{
+					modelStack.PushMatrix();
+					modelStack.Scale(0.5f, 0.625f, 0.5f);
+					RenderMesh(meshList[GEO_CYLINDER]);
+					modelStack.PopMatrix();
 
-	modelStack.PushMatrix(); // Sides Plates
-	modelStack.Translate(0, 0.765f, 0.54f);
-	modelStack.Rotate(60, 1, 0, 0);
-	modelStack.Scale(0.7f, 0.55f, 0.85f);
-	RenderMesh(meshList[GEO_CYLINDER]);
-	modelStack.PopMatrix();
+					modelStack.PushMatrix();
+					modelStack.Translate(-0.425f, 0, 0);
+					modelStack.Rotate(90, 0, 0, 1);
+					modelStack.Scale(0.37f, 0.2f, 0.42f);
+					RenderMesh(meshList[GEO_HALFSPHERE]);
+					modelStack.PopMatrix();
 
-	modelStack.PushMatrix();
-	modelStack.Translate(0, 0.765f, -0.54f);
-	modelStack.Rotate(-60, 1, 0, 0);
-	modelStack.Scale(0.7f, 0.55f, 0.85f);
-	RenderMesh(meshList[GEO_CYLINDER]);
-	modelStack.PopMatrix(); // Sides Plates
+					modelStack.PushMatrix(); // Lower Leg
+					//modelStack.Translate(0, 0, 0);
+					modelStack.Rotate(walk/2, 0, 0, 1);
+					//modelStack.Rotate(debugRotation, debugRotationAxis);
+					{
+						modelStack.PushMatrix();
+						modelStack.Translate(0, -1.1f, 0);
+						modelStack.Scale(0.35f, 2.4f, 0.35f);
+						RenderMesh(meshList[GEO_CYLINDER]);
+						modelStack.PopMatrix();
 
-	modelStack.PushMatrix(); // LLegBase
-	modelStack.Translate(0, -1.f, -0.75f);
-	modelStack.Rotate(-walk, 0, 0, 1);
-	modelStack.Translate(0, -1.f, 0);
+						modelStack.PushMatrix(); // RFoot
+						modelStack.Translate(0, -2.5f, 0);
+						modelStack.Rotate(walk, 0, 0, 1);
+						//modelStack.Rotate(debugRotation, debugRotationAxis);
+						{
+							modelStack.PushMatrix();
+							modelStack.Translate(-0.5f, 0, 0);
+							modelStack.Scale(1.f, 0.35f, 0.35f);
+							RenderMesh(meshList[GEO_CUBE]);
+							modelStack.PopMatrix();
 
-	modelStack.PushMatrix(); // KneeAbove
-	modelStack.Translate(0, -1.f, 0);
-	modelStack.Scale(0.6f, 0.6f, 0.66f);
-	RenderMesh(meshList[GEO_CYLINDER]);
-	modelStack.PopMatrix(); // KneeAbove
+						}
+						modelStack.PopMatrix(); // RFoot
+					}
+					modelStack.PopMatrix(); // Lower Leg
+				}
+				modelStack.PopMatrix(); // Knee Pad
+			}
+			modelStack.PopMatrix(); // Knee Below
 
-	modelStack.PushMatrix(); // LLeg
-	modelStack.Scale(0.5f, 2.5f, 0.5f);
-	RenderMesh(meshList[GEO_CYLINDER]);
-	modelStack.PopMatrix(); // LLeg
-	
-	modelStack.PushMatrix(); // Knee Below
+			modelStack.PushMatrix(); // RLeg
+			modelStack.Scale(0.5f, 2.5f, 0.5f);
+			RenderMesh(meshList[GEO_CYLINDER]);
+			modelStack.PopMatrix(); // RLeg
+		}
+		modelStack.PopMatrix(); // RLegBase
 
-	modelStack.PushMatrix(); // Knee Pad
-	modelStack.Translate(0, -1.6f, 0);
-	modelStack.Rotate(walk, 0, 0, 1);
-	
-	modelStack.PushMatrix();
-	modelStack.Scale(0.5f, 0.625f, 0.5f);
-	RenderMesh(meshList[GEO_CYLINDER]);
-	modelStack.PopMatrix();
+		}
+		modelStack.PopMatrix(); // Body
 
-	modelStack.Translate(-0.425f,0,0);
-	modelStack.Rotate(90, 0, 0, 1);
-	modelStack.Scale(0.37f, 0.2f, 0.42f);
-	RenderMesh(meshList[GEO_HALFSPHERE]);
+		modelStack.PushMatrix(); // Neck
+		modelStack.Translate(0, 1.5f, 0);
+		modelStack.Scale(0.5f, 1.5f, 0.5f);
+		RenderMesh(meshList[GEO_CONE], true);
+		modelStack.PopMatrix(); // Neck
 
-	modelStack.PopMatrix(); // Knee Pad
+		modelStack.PushMatrix(); // Head
+		modelStack.Translate(0, 2.5f, 0);
+		{
+			modelStack.PushMatrix(); // Top Helmet
+			modelStack.Translate(0, 0.3f, 0);
+			modelStack.Scale(0.6f, 0.5f, 0.6f);
+			RenderMesh(meshList[GEO_HALFSPHERE], true);
+			modelStack.PopMatrix(); // Top Helmet
 
-	modelStack.PushMatrix(); // Lower Leg
-	modelStack.Translate(0, -2.f, 0);
-	modelStack.Rotate(walk, 0, 0, 1);
-	//modelStack.Rotate(debugRotation, debugRotationAxis);
+			modelStack.PushMatrix(); // Bottom Helmet
+			modelStack.Translate(0, -0.3f, 0);
+			modelStack.Rotate(180, 1, 0, 0);
+			modelStack.Scale(0.6f, 0.5f, 0.6f);
+			RenderMesh(meshList[GEO_HALFSPHERE], true);
+			modelStack.PopMatrix(); // Bottom Helmet
 
-	modelStack.PushMatrix();
-	modelStack.Translate(0, -1.1f, 0);
-	modelStack.Scale(0.35f, 2.4f, 0.35f);
-	RenderMesh(meshList[GEO_CYLINDER]);
-	modelStack.PopMatrix();
+			modelStack.PushMatrix(); // Sides
+			modelStack.Translate(0,0,0.5f);
+			modelStack.Scale(0.2f, 0.3f, 0.06f);
+			RenderMesh(meshList[GEO_CUBE], true);
+			modelStack.PopMatrix();
+			modelStack.PushMatrix();
+			modelStack.Translate(0, 0, -0.5f);
+			modelStack.Scale(0.2f, 0.3f, 0.06f);
+			RenderMesh(meshList[GEO_CUBE], true);
+			modelStack.PopMatrix(); // Sides
 
-	modelStack.PopMatrix(); // Lower Leg
+			modelStack.PushMatrix();
+			modelStack.Translate(-0.35f, -0.2f, -0.28f);
+			modelStack.Rotate(-40, 0, 1, 0);
+			modelStack.Scale(0.06f, 0.1f, 0.3f);
+			RenderMesh(meshList[GEO_CUBE]);
+			modelStack.PopMatrix();
 
-	modelStack.PushMatrix(); // LFoot
-	modelStack.Translate(0, -4.3f, 0);
-	modelStack.Rotate(walk, 0, 0, 1);
-	//modelStack.Rotate(debugRotation, debugRotationAxis);
+			modelStack.PushMatrix();
+			modelStack.Translate(-0.35f, -0.2f, 0.28f);
+			modelStack.Rotate(40, 0, 1, 0);
+			modelStack.Scale(0.06f, 0.1f, 0.3f);
+			RenderMesh(meshList[GEO_CUBE]);
+			modelStack.PopMatrix();
 
-	modelStack.PushMatrix();
-	modelStack.Translate(-0.5f, 0, 0);
-	modelStack.Scale(1.f, 0.35f, 0.35f);
-	RenderMesh(meshList[GEO_CUBE]);
-	modelStack.PopMatrix();
-	
-	modelStack.PopMatrix(); // LFoot
-
-	modelStack.PopMatrix(); // Knee Below
-
-	modelStack.PopMatrix(); // LLegBase
-
-	modelStack.PushMatrix(); // RLegBase
-	modelStack.Translate(0, -1.f, 0.75f);
-	modelStack.Rotate(walk, 0,0,1);
-	modelStack.Translate(0, -1.f, 0);
-
-	modelStack.PushMatrix(); // KneeAbove
-	modelStack.Translate(0, -1.f, 0);
-	modelStack.Scale(0.6f, 0.6f, 0.66f);
-	RenderMesh(meshList[GEO_CYLINDER]);
-	modelStack.PopMatrix(); // KneeAbove
-
-	modelStack.PushMatrix(); // Knee Below
-
-	modelStack.PushMatrix(); // Knee Pad
-	modelStack.Translate(0, -1.6f, 0);
-	modelStack.Rotate(-walk, 0, 0, 1);
-
-	modelStack.PushMatrix();
-	modelStack.Scale(0.5f, 0.625f, 0.5f);
-	RenderMesh(meshList[GEO_CYLINDER]);
-	modelStack.PopMatrix();
-
-	modelStack.Translate(-0.425f, 0, 0);
-	modelStack.Rotate(90, 0, 0, 1);
-	modelStack.Scale(0.37f, 0.2f, 0.42f);
-	RenderMesh(meshList[GEO_HALFSPHERE]);
-
-	modelStack.PopMatrix(); // Knee Pad
-
-	modelStack.PushMatrix(); // Lower Leg
-	modelStack.Translate(0, -2.f, 0);
-	modelStack.Rotate(-walk, 0, 0, 1);
-	//modelStack.Rotate(debugRotation, debugRotationAxis);
-
-	modelStack.PushMatrix();
-	modelStack.Translate(0, -1.1f, 0);
-	modelStack.Scale(0.35f, 2.4f, 0.35f);
-	RenderMesh(meshList[GEO_CYLINDER]);
-	modelStack.PopMatrix();
-
-	modelStack.PopMatrix(); // Lower Leg
-
-	modelStack.PushMatrix(); // RFoot
-	modelStack.Translate(0, -4.3f, 0);
-	modelStack.Rotate(-walk, 0, 0, 1);
-	//modelStack.Rotate(debugRotation, debugRotationAxis);
-
-	modelStack.PushMatrix();
-	modelStack.Translate(-0.5f, 0, 0);
-	modelStack.Scale(1.f, 0.35f, 0.35f);
-	RenderMesh(meshList[GEO_CUBE]);
-	modelStack.PopMatrix();
-
-	modelStack.PopMatrix(); // RFoot
-
-	modelStack.PopMatrix(); // Knee Below
-
-	modelStack.PushMatrix(); // RLeg
-	modelStack.Scale(0.5f, 2.5f, 0.5f);
-	RenderMesh(meshList[GEO_CYLINDER]);
-	modelStack.PopMatrix(); // RLeg
-
-	modelStack.PopMatrix(); // RLegBase
-
-	modelStack.PopMatrix(); // Body
-
-	modelStack.PushMatrix(); // Neck
-	modelStack.Translate(0, 1.5f, 0);
-	modelStack.Scale(0.5f, 1.5f, 0.5f);
-	RenderMesh(meshList[GEO_CONE], true);
-	modelStack.PopMatrix(); // Neck
-
-	modelStack.PushMatrix(); // Head
-	modelStack.Translate(0, 2.5f, 0);
-
-	modelStack.PushMatrix(); // Top Helmet
-	modelStack.Translate(0, 0.3f, 0);
-	modelStack.Scale(0.6f, 0.5f, 0.6f);
-	RenderMesh(meshList[GEO_HALFSPHERE], true);
-	modelStack.PopMatrix(); // Top Helmet
-	
-	modelStack.PushMatrix(); // Bottom Helmet
-	modelStack.Translate(0, -0.3f, 0);
-	modelStack.Rotate(180, 1, 0, 0);
-	modelStack.Scale(0.6f, 0.5f, 0.6f);
-	RenderMesh(meshList[GEO_HALFSPHERE], true);
-	modelStack.PopMatrix(); // Bottom Helmet
-
-	modelStack.PushMatrix(); // Sides
-	modelStack.Translate(0,0,0.5f);
-	modelStack.Scale(0.2f, 0.3f, 0.06f);
-	RenderMesh(meshList[GEO_CUBE], true);
-	modelStack.PopMatrix();
-	modelStack.PushMatrix();
-	modelStack.Translate(0, 0, -0.5f);
-	modelStack.Scale(0.2f, 0.3f, 0.06f);
-	RenderMesh(meshList[GEO_CUBE], true);
-	modelStack.PopMatrix(); // Sides
-
-	modelStack.PushMatrix();
-	modelStack.Translate(-0.35f, -0.2f, -0.28f);
-	modelStack.Rotate(-40, 0, 1, 0);
-	modelStack.Scale(0.06f, 0.1f, 0.3f);
-	RenderMesh(meshList[GEO_CUBE]);
-	modelStack.PopMatrix();
-
-	modelStack.PushMatrix();
-	modelStack.Translate(-0.35f, -0.2f, 0.28f);
-	modelStack.Rotate(40, 0, 1, 0);
-	modelStack.Scale(0.06f, 0.1f, 0.3f);
-	RenderMesh(meshList[GEO_CUBE]);
-	modelStack.PopMatrix();
-
-	modelStack.PushMatrix();
-	modelStack.Scale(0.5f, 1, 0.5f);
-	RenderMesh(meshList[GEO_FACESHIELD], true);
-	modelStack.PopMatrix();
-	modelStack.PopMatrix(); // Head
-
+			modelStack.PushMatrix();
+			modelStack.Scale(0.5f, 1, 0.5f);
+			RenderMesh(meshList[GEO_FACESHIELD], true);
+			modelStack.PopMatrix();
+		}
+		modelStack.PopMatrix(); // Head
+	}
 	modelStack.PopMatrix(); // Person
 
 #endif
@@ -829,13 +849,14 @@ void ICA::HandleKeyPress(double dt)
 		debugoutput.open("SNAPSHOT.txt");
 		for (int i = 0; i < 10; ++i)
 		{
+			debugoutput << "INDEX: " << i << std::endl;
         debugoutput << "TRANSLATION: " << dbt[i].debugTranslate.x << '|' << dbt[i].debugTranslate.y << '|' << dbt[i].debugTranslate.z << std::endl;
         debugoutput << "ROTATIONAXIS: " << dbt[i].debugRotationAxis.x << '|' << dbt[i].debugRotationAxis.y << '|' << dbt[i].debugRotationAxis.z << ',' << debugRotation[i] << std::endl;
         debugoutput << "SCALE: " << dbt[i].debugScale.x << '|' << dbt[i].debugScale.y << '|' << dbt[i].debugScale.z << std::endl;
 		}
         debugoutput.close();
     }
-	dbt[dbtindex].debugRotationAxis = glm::clamp(dbt[dbtindex].debugRotationAxis, { 0,0,0 }, { 1,1,1 });
+	dbt[dbtindex].debugRotationAxis = glm::clamp(dbt[dbtindex].debugRotationAxis, { -1,-1,-1 }, { 1,1,1 });
 	if (in->IsKeyPressed(GLFW_KEY_KP_MULTIPLY))
 	{
 		dbtindex < 9 ? ++dbtindex : dbtindex;
@@ -846,8 +867,27 @@ void ICA::HandleKeyPress(double dt)
 		dbtindex > 0 ? --dbtindex : dbtindex;
 		std::cout << "INDEX: " << dbtindex << std::endl;
 	}
-	if (in->IsKeyDown(GLFW_KEY_E))
-		walkCycle += 0.1f;
+	if (in->IsKeyPressed(GLFW_KEY_KP_0))
+		*debug = {0,0,0};
+	if (in->IsKeyPressed(GLFW_KEY_KP_DECIMAL))
+		debugRotation[dbtindex] = 0;
+	if (in->IsKeyDown(GLFW_KEY_A))
+		playerRotate += 3;
+	if (in->IsKeyDown(GLFW_KEY_D))
+		playerRotate -= 3;
+	playerDist = 0;
+	if (in->IsKeyDown(GLFW_KEY_W))
+	{
+		playerDist = 0.5f;
+		walkCycle += 0.25f;
+	}
+	if (in->IsKeyDown(GLFW_KEY_S))
+	{
+		playerDist = -0.5f;
+		walkCycle -= 0.25f;
+	}
+	glm::vec3 pdelta{glm::cos(glm::radians(playerRotate))*playerDist,0,-glm::sin(glm::radians(playerRotate))*playerDist};
+	playerPos -= pdelta;
 }
 
 void ICA::RenderMesh(Mesh* mesh, bool enableLight)
