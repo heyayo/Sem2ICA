@@ -1,3 +1,4 @@
+#include <ios>
 #include <iostream>
 #include "ICA.hpp"
 #include "GL/glew.h"
@@ -24,7 +25,7 @@ void ICA::Init()
 {
 	camera.init(45.f,45.f,10.f);
 	// Set background color to dark blue
-	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 	//Enable depth buffer and depth testing
 	glEnable(GL_DEPTH_TEST);
@@ -130,6 +131,29 @@ void ICA::Update(double dt)
 	HandleKeyPress(dt);
 
 	camera.update(dt);
+
+	if (astate == JUMP)
+	{
+		playerPos.y = glm::sin(jumpSine)*5;
+		bodyRotate = glm::sin(jumpSine*0.5)*360;
+		if (glm::degrees(jumpSine) < 180)
+			jumpSine += dt;
+		else
+			astate = WALK;
+	}
+	if (astate == DANCE)
+	{
+		walk = glm::sin(legBend)*45;
+		handRotate = glm::sin(handWave)*45;
+		rightArmRotate = handRotate;
+		leftArmRotate = -handRotate;
+		legBend += dt;
+		handWave += dt;
+	}
+	if (astate == WALK)
+	{
+		walk = sin(walkCycle) * 30;
+	}
 }
 
 void ICA::Render()
@@ -166,7 +190,9 @@ void ICA::Render()
 
 	modelStack.PushMatrix();
 	modelStack.Translate(playerPos);
+	modelStack.Translate(glm::sin(glm::radians(leftArmRotate)),0,glm::cos(glm::radians(leftArmRotate)));
 	modelStack.Rotate(playerRotate,0,1,0);
+	modelStack.Rotate(bodyRotate,0,0,1);
 	modelStack.Translate(-3.2f, 1.225f, 0);
 	{
 		modelStack.PushMatrix();
@@ -401,13 +427,12 @@ void ICA::Render()
 	modelStack.PopMatrix(); // GUN
 #endif
 
-	float walk = sin(walkCycle) * 30;
-
 #ifdef PERSON
 
 	modelStack.PushMatrix(); // Person
 	modelStack.Translate(playerPos);
 	modelStack.Rotate(playerRotate,0,1,0);
+	modelStack.Rotate(bodyRotate,0,0,1);
 	{
 		modelStack.PushMatrix(); // Body
 		{
@@ -435,7 +460,7 @@ void ICA::Render()
 
 			modelStack.PushMatrix(); // Right Arm
 			modelStack.Translate(0, 1.f, 0.7f);
-			modelStack.Rotate(-72.f,0,1,0);
+			modelStack.Rotate(rightArmRotate,0,1,0);
 			{
 				
 				modelStack.PushMatrix();
@@ -475,7 +500,7 @@ void ICA::Render()
 
 		modelStack.PushMatrix(); // Left Arm
 		modelStack.Translate(0, 1.f, -0.7f);
-		modelStack.Rotate(52,0,1,0);
+		modelStack.Rotate(leftArmRotate,0,1,0);
 		{
 			modelStack.PushMatrix();
 			modelStack.Translate(0, 0, -1.1f);
@@ -768,10 +793,6 @@ void ICA::HandleKeyPress(double dt)
 		// Key press to enable wireframe mode for the polygon
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode
 	}
-	if (in->IsKeyPressed(GLFW_KEY_5))
-	{
-		glClearColor(0,0,0,0);
-	}
 	if (in->IsKeyPressed(GLFW_KEY_P))
 	{
 		projType = !projType;
@@ -888,6 +909,28 @@ void ICA::HandleKeyPress(double dt)
 	}
 	glm::vec3 pdelta{glm::cos(glm::radians(playerRotate))*playerDist,0,-glm::sin(glm::radians(playerRotate))*playerDist};
 	playerPos -= pdelta;
+	if (in->IsKeyPressed(GLFW_KEY_6))
+	{
+		astate = DANCE;
+		legBend = 0;
+		handWave = 0;
+		rightArmRotate = -72;
+		leftArmRotate = 52;
+	}
+	if (in->IsKeyPressed(GLFW_KEY_7))
+	{
+		astate = JUMP;
+		jumpSine = 0;
+		rightArmRotate = -72;
+		leftArmRotate = 52;
+		bodyRotate = 0;
+	}
+	if (in->IsKeyPressed(GLFW_KEY_5))
+	{
+		astate = WALK;
+		rightArmRotate = -72;
+		leftArmRotate = 52;
+	}
 }
 
 void ICA::RenderMesh(Mesh* mesh, bool enableLight)

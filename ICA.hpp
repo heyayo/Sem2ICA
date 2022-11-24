@@ -40,6 +40,13 @@ public:
 		U_TOTAL,
 	};
 
+	enum ANIMSTATE
+	{
+		WALK,
+		DANCE,
+		JUMP
+	};
+
 	ICA();
 	~ICA();
 
@@ -79,5 +86,17 @@ private:
 	float playerRotate = 0;
 	float playerDist = 0;
     glm::vec3* debug = &dbt[0].debugTranslate;
+	
+	float leftArmRotate = 52;
+	float rightArmRotate = -72;
+	float walk = 0;
+
+	ANIMSTATE astate = WALK;
+	float jumpSine = 0;
+	float handWave = 0;
+	float handRotate = 0;
+	float legBend = 0;
+	float legRotate = 0;
+	float bodyRotate = 0;
 };
 #endif
