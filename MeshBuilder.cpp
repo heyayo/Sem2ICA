@@ -73,6 +73,7 @@ Mesh* MeshBuilder::GenerateQuad(const std::string &meshName, Color color, float 
 	Vertex v;
 	std::vector<Vertex> vertex_buffer_data;
 	std::vector<GLuint> index_buffer_data;
+	v.normal.Set(0, 0, 1);
 
 	// Add the vertices here
 	v.pos.Set(0.5f * length, -0.5f * length, 0.f);	vertex_buffer_data.push_back(v); //v3

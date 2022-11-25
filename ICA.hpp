@@ -17,6 +17,10 @@ public:
 		GEO_HALFSPHERE,
 		GEO_CONE,
 		GEO_FACESHIELD,
+		GEO_BLACKCYLINDER,
+		GEO_METALICCYLINDER,
+		GEO_METALICCUBE,
+		GEO_GROUNDPLANE,
 		GEO_LIGHT,
 		NUM_GEOMETRY,
 	};
@@ -95,8 +99,9 @@ private:
 	float jumpSine = 0;
 	float handWave = 0;
 	float handRotate = 0;
-	float legBend = 0;
 	float legRotate = 0;
 	float bodyRotate = 0;
+	float footRotate = 0;
+	float kneeBend = 0;
 };
 #endif

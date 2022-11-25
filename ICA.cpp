@@ -23,7 +23,7 @@ ICA::~ICA()
 
 void ICA::Init()
 {
-	camera.init(45.f,45.f,10.f);
+	camera.init(45.f,45.f,15.f);
 	// Set background color to dark blue
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -84,37 +84,57 @@ glUniform1f(m_parameters[U_LIGHT0_KQ], light[0].Q);
 	}
 
 	meshList[GEO_AXES] = MeshBuilder::GenerateAxes("Axes", 10000.f, 10000.f, 10000.f);
-	meshList[GEO_SPHERE] = MeshBuilder::GenerateSphere("SUN",{1,1,1},4,32,32);
-	meshList[GEO_HALFSPHERE] = MeshBuilder::GenerateHemisphere("HALFSPHERE", { 0,1,0 });
-	meshList[GEO_CYLINDER] = MeshBuilder::GenerateCylinder("CYL",{1,1,1},32,1,1);
+	meshList[GEO_GROUNDPLANE] = MeshBuilder::GenerateQuad("GROUND", { 1,1,1 }, 100);
+	meshList[GEO_SPHERE] = MeshBuilder::GenerateSphere("SUN",{0.1f,0.1f,0.1f},4,32,32);
+	meshList[GEO_HALFSPHERE] = MeshBuilder::GenerateHemisphere("HALFSPHERE", { 12 / 255.f,84 / 255.f,32 / 255.f });
+	meshList[GEO_CYLINDER] = MeshBuilder::GenerateCylinder("CYL", { 12 / 255.f,84 / 255.f,32 / 255.f },32,1,1);
+	meshList[GEO_METALICCYLINDER] = MeshBuilder::GenerateCylinder("CYL", { 0.2f,0.2f,0.2f },32,1,1);
+	meshList[GEO_BLACKCYLINDER] = MeshBuilder::GenerateCylinder("CYL", { 0.1f,0.1f,0.1f },32,1,1);
 	meshList[GEO_FACESHIELD] = MeshBuilder::GenerateCylinder("FACESHIELD", { 1,210.f / 255.f,61.f / 255.f },32);
-    meshList[GEO_CUBE] = MeshBuilder::GenerateCube("CUBE",{1,1,1},2.f);
-	meshList[GEO_CONE] = MeshBuilder::GenerateCone("CONE", { 1,1,1 }, 32.f);
+    meshList[GEO_CUBE] = MeshBuilder::GenerateCube("CUBE",{12/255.f,84/255.f,32/255.f},2.f);
+    meshList[GEO_METALICCUBE] = MeshBuilder::GenerateCube("CUBE", { 0.2f,0.2f,0.2f },2.f);
+	meshList[GEO_CONE] = MeshBuilder::GenerateCone("CONE", { 0.1f,0.1f,0.1f }, 32.f);
 	meshList[GEO_LIGHT] = MeshBuilder::GenerateSphere("BULB",{1,1,1},1,8,8);
 	meshList[GEO_SPHERE]->mat.ambient = {0.1f, 0.1f, 0.1f};
-	meshList[GEO_SPHERE]->mat.diffuse = {0.5f, 0.5f, 0.5f};
-	meshList[GEO_SPHERE]->mat.specular = {0.9f, 0.9f, 0.9f};
-	meshList[GEO_SPHERE]->mat.shininess = 5.0f;
-    meshList[GEO_CYLINDER]->mat.ambient = {0.1f, 0.1f, 0.1f};
-	meshList[GEO_CYLINDER]->mat.diffuse = {0.5f, 0.5f, 0.5f};
-	meshList[GEO_CYLINDER]->mat.specular = {1.f, 1.f, 1.f};
-	meshList[GEO_CYLINDER]->mat.shininess = 3.0f;
+	meshList[GEO_SPHERE]->mat.diffuse = {1.f, 1.0f, 1.0f};
+	meshList[GEO_SPHERE]->mat.specular = {0.1f, 0.1f, 0.1f};
+	meshList[GEO_SPHERE]->mat.shininess = .2f;
+	meshList[GEO_BLACKCYLINDER]->mat.ambient = {0.1f, 0.1f, 0.1f};
+	meshList[GEO_BLACKCYLINDER]->mat.diffuse = {1.f, 1.0f, 1.0f};
+	meshList[GEO_BLACKCYLINDER]->mat.specular = {0.1f, 0.1f, 0.1f};
+	meshList[GEO_BLACKCYLINDER]->mat.shininess = .2f;
 	meshList[GEO_CUBE]->mat.ambient = { 0.1f, 0.1f, 0.1f };
-	meshList[GEO_CUBE]->mat.diffuse = { 0.5f, 0.5f, 0.5f };
-	meshList[GEO_CUBE]->mat.specular = { 1.f, 1.f, 1.f };
-	meshList[GEO_CUBE]->mat.shininess = 3.0f;
+	meshList[GEO_CUBE]->mat.diffuse = { 0.9f, 0.9f, 0.9f };
+	meshList[GEO_CUBE]->mat.specular = { .2f, .2f, .2f };
+	meshList[GEO_CUBE]->mat.shininess = 1.0f;
 	meshList[GEO_CONE]->mat.ambient = { 0.1f, 0.1f, 0.1f };
-	meshList[GEO_CONE]->mat.diffuse = { 0.5f, 0.5f, 0.5f };
-	meshList[GEO_CONE]->mat.specular = { 1.f, 1.f, 1.f };
-	meshList[GEO_CONE]->mat.shininess = 3.0f;
+	meshList[GEO_CONE]->mat.diffuse = { 1.f, 1.0f, 1.0f };
+	meshList[GEO_CONE]->mat.specular = { 0.1f, 0.1f, 0.1f };
+	meshList[GEO_CONE]->mat.shininess = .2f;
 	meshList[GEO_HALFSPHERE]->mat.ambient = { 0.1f, 0.1f, 0.1f };
 	meshList[GEO_HALFSPHERE]->mat.diffuse = { 0.9f, 0.9f, 0.9f };
-	meshList[GEO_HALFSPHERE]->mat.specular = { .6f, .6f, .6f };
-	meshList[GEO_HALFSPHERE]->mat.shininess = 6.0f;
+	meshList[GEO_HALFSPHERE]->mat.specular = { .2f, .2f, .2f };
+	meshList[GEO_HALFSPHERE]->mat.shininess = 1.0f;
+	meshList[GEO_CYLINDER]->mat.ambient = { 0.1f, 0.1f, 0.1f };
+	meshList[GEO_CYLINDER]->mat.diffuse = { 0.9f, 0.9f, 0.9f };
+	meshList[GEO_CYLINDER]->mat.specular = { .2f, .2f, .2f };
+	meshList[GEO_CYLINDER]->mat.shininess = 1.0f;
+	meshList[GEO_METALICCYLINDER]->mat.ambient = { 0.1f, 0.1f, 0.1f };
+	meshList[GEO_METALICCYLINDER]->mat.diffuse = { 0.6f, 0.6f, 0.6f };
+	meshList[GEO_METALICCYLINDER]->mat.specular = { .8f, .8f, .8f };
+	meshList[GEO_METALICCYLINDER]->mat.shininess = 4.0f;
+	meshList[GEO_METALICCUBE]->mat.ambient = { 0.1f, 0.1f, 0.1f };
+	meshList[GEO_METALICCUBE]->mat.diffuse = { 0.6f, 0.6f, 0.6f };
+	meshList[GEO_METALICCUBE]->mat.specular = { .8f, .8f, .8f };
+	meshList[GEO_METALICCUBE]->mat.shininess = 4.0f;
 	meshList[GEO_FACESHIELD]->mat.ambient = { 0.1f, 0.1f, 0.1f };
 	meshList[GEO_FACESHIELD]->mat.diffuse = { 0.25f, 0.25f, 0.25f };
 	meshList[GEO_FACESHIELD]->mat.specular = { 10.f, 10.f, 10.f };
 	meshList[GEO_FACESHIELD]->mat.shininess = 10.0f;
+	meshList[GEO_GROUNDPLANE]->mat.ambient = { 0.6f, 0.6f, 0.6f };
+	meshList[GEO_GROUNDPLANE]->mat.diffuse = { 0.f, 0.f, 0.f };
+	meshList[GEO_GROUNDPLANE]->mat.specular = { 10.f, 10.f, 10.f };
+	meshList[GEO_GROUNDPLANE]->mat.shininess = 10.0f;
 
 	for (int i = 0; i < 10; ++i)
 	{
@@ -134,21 +154,29 @@ void ICA::Update(double dt)
 
 	if (astate == JUMP)
 	{
-		playerPos.y = glm::sin(jumpSine)*5;
+		float sineTemp = glm::sin(jumpSine);
+		playerPos.y = sineTemp*5;
 		bodyRotate = glm::sin(jumpSine*0.5)*360;
+		footRotate = sineTemp * 90;
+		kneeBend = sineTemp * 90;
 		if (glm::degrees(jumpSine) < 180)
-			jumpSine += dt;
+			jumpSine += dt * 2;
 		else
+		{
 			astate = WALK;
+			walkCycle = 0;
+		}
+		glm::vec3 pdelta{ glm::cos(glm::radians(playerRotate)) * 0.1,0,
+			-glm::sin(glm::radians(playerRotate)) * 0.1 };
+		playerPos -= pdelta;
 	}
 	if (astate == DANCE)
 	{
-		walk = glm::sin(legBend)*45;
 		handRotate = glm::sin(handWave)*45;
+		walk = handRotate;
 		rightArmRotate = handRotate;
 		leftArmRotate = -handRotate;
-		legBend += dt;
-		handWave += dt;
+		handWave += dt * 3;
 	}
 	if (astate == WALK)
 	{
@@ -185,47 +213,57 @@ void ICA::Render()
 
 #define PERSON
 #define SHOTGUN
+//#define GUN
+
+	modelStack.PushMatrix();
+	modelStack.LoadIdentity();
+	modelStack.Translate(0, -6.6f, 0);
+	modelStack.Rotate(-90, 1, 0, 0);
+	RenderMesh(meshList[GEO_GROUNDPLANE]);
+	modelStack.PopMatrix();
 
 #ifdef SHOTGUN
 
 	modelStack.PushMatrix();
 	modelStack.Translate(playerPos);
-	modelStack.Translate(glm::sin(glm::radians(leftArmRotate)),0,glm::cos(glm::radians(leftArmRotate)));
+	if (astate == DANCE)
+		modelStack.Translate(0, 1000, 0);
 	modelStack.Rotate(playerRotate,0,1,0);
+	modelStack.Translate(glm::sin(glm::radians(leftArmRotate)),0,glm::cos(glm::radians(leftArmRotate)));
 	modelStack.Rotate(bodyRotate,0,0,1);
-	modelStack.Translate(-3.2f, 1.225f, 0);
+	modelStack.Translate(-4.2f, 1.225f, -0.5f);
 	{
 		modelStack.PushMatrix();
 		modelStack.Rotate(90,0,0,1);
 		modelStack.Scale(0.1f,2.5f,0.1f);
-		RenderMesh(meshList[GEO_CYLINDER]);
+		RenderMesh(meshList[GEO_METALICCYLINDER]);
 		modelStack.PopMatrix();
 
 		modelStack.PushMatrix();
 		modelStack.Translate(0,-.1f,0);
 		modelStack.Rotate(90,0,0,1);
 		modelStack.Scale(0.1f,2.5f,0.1f);
-		RenderMesh(meshList[GEO_CYLINDER]);
+		RenderMesh(meshList[GEO_METALICCYLINDER]);
 		modelStack.PopMatrix();
 
 		modelStack.PushMatrix();
 		modelStack.Translate(1.f,-.34f,0);
 		modelStack.Rotate(20,0,0,1);
 		modelStack.Scale(0.1f,0.37f,0.05f);
-		RenderMesh(meshList[GEO_CUBE]);
+		RenderMesh(meshList[GEO_METALICCUBE]);
 		modelStack.PopMatrix();
 
 		modelStack.PushMatrix();
 		modelStack.Translate(1.6f,0.f,0.f);
 		modelStack.Scale(0.37f,0.2f,0.1f);
-		RenderMesh(meshList[GEO_CUBE]);
+		RenderMesh(meshList[GEO_METALICCUBE]);
 		modelStack.PopMatrix();
 
 		modelStack.PushMatrix();
 		modelStack.Translate(1.66f,-0.17f,0);
 		modelStack.Rotate(-27.2f,0,0,1);
 		modelStack.Scale(0.37f,0.22f,0.1f);
-		RenderMesh(meshList[GEO_CUBE]);
+		RenderMesh(meshList[GEO_METALICCUBE]);
 		modelStack.PopMatrix();
 
 		modelStack.PushMatrix();
@@ -233,13 +271,13 @@ void ICA::Render()
 		modelStack.Translate(-0.44f,-0.1f,0);
 		modelStack.Rotate(90,0,0,1);
 		modelStack.Scale(0.17f,0.8f,0.1f);
-		RenderMesh(meshList[GEO_CYLINDER]);
+		RenderMesh(meshList[GEO_METALICCYLINDER]);
 		modelStack.PopMatrix();
 
 		modelStack.PushMatrix();
 		modelStack.Translate(-1.f,0.1f,0);
 		modelStack.Scale(0.15f,0.03f,0.04f);
-		RenderMesh(meshList[GEO_CUBE]);
+		RenderMesh(meshList[GEO_METALICCUBE]);
 		modelStack.PopMatrix();
 	}
 	modelStack.PopMatrix();
@@ -579,10 +617,11 @@ void ICA::Render()
 				modelStack.PushMatrix(); // Knee Pad
 				modelStack.Translate(0, -1.6f, 0);
 				modelStack.Rotate(walk, 0, 0, 1);
+				modelStack.Rotate(kneeBend, 0, 0, 1);
 				{
 					modelStack.PushMatrix();
 					modelStack.Scale(0.5f, 0.625f, 0.5f);
-					RenderMesh(meshList[GEO_CYLINDER]);
+					RenderMesh(meshList[GEO_BLACKCYLINDER]);
 					modelStack.PopMatrix();
 
 					modelStack.PushMatrix();
@@ -606,6 +645,7 @@ void ICA::Render()
 						modelStack.PushMatrix(); // LFoot
 						modelStack.Translate(0, -2.5f, 0);
 						modelStack.Rotate(-walk, 0, 0, 1);
+						modelStack.Rotate(footRotate, 0, 0, 1);
 						//modelStack.Rotate(debugRotation, debugRotationAxis);
 						{
 							modelStack.PushMatrix();
@@ -640,10 +680,11 @@ void ICA::Render()
 				modelStack.PushMatrix(); // Knee Pad
 				modelStack.Translate(0, -1.6f, 0);
 				modelStack.Rotate(-walk, 0, 0, 1);
+				modelStack.Rotate(kneeBend, 0, 0, 1);
 				{
 					modelStack.PushMatrix();
 					modelStack.Scale(0.5f, 0.625f, 0.5f);
-					RenderMesh(meshList[GEO_CYLINDER]);
+					RenderMesh(meshList[GEO_BLACKCYLINDER]);
 					modelStack.PopMatrix();
 
 					modelStack.PushMatrix();
@@ -667,6 +708,7 @@ void ICA::Render()
 						modelStack.PushMatrix(); // RFoot
 						modelStack.Translate(0, -2.5f, 0);
 						modelStack.Rotate(walk, 0, 0, 1);
+						modelStack.Rotate(footRotate, 0, 0, 1);
 						//modelStack.Rotate(debugRotation, debugRotationAxis);
 						{
 							modelStack.PushMatrix();
@@ -912,10 +954,12 @@ void ICA::HandleKeyPress(double dt)
 	if (in->IsKeyPressed(GLFW_KEY_6))
 	{
 		astate = DANCE;
-		legBend = 0;
 		handWave = 0;
 		rightArmRotate = -72;
 		leftArmRotate = 52;
+		walk = 0;
+		playerPos.y = 0;
+		kneeBend = 0;
 	}
 	if (in->IsKeyPressed(GLFW_KEY_7))
 	{
@@ -924,12 +968,33 @@ void ICA::HandleKeyPress(double dt)
 		rightArmRotate = -72;
 		leftArmRotate = 52;
 		bodyRotate = 0;
+		footRotate = 0;
+		walk = 0;
+		kneeBend = 0;
 	}
 	if (in->IsKeyPressed(GLFW_KEY_5))
 	{
 		astate = WALK;
 		rightArmRotate = -72;
 		leftArmRotate = 52;
+		kneeBend = 0;
+	}
+	if (in->IsKeyPressed(GLFW_KEY_8))
+	{
+		jumpSine = 0;
+		handWave = 0;
+		handRotate = 0;
+		legRotate = 0;
+		bodyRotate = 0;
+		footRotate = 0;
+		leftArmRotate = 52;
+		rightArmRotate = -72;
+		walk = 0;
+		playerDist = 0;
+		playerRotate = 0;
+		walkCycle = 0;
+		playerPos = { 0,0,0 };
+		kneeBend = 0;
 	}
 }
 
