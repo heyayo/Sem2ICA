@@ -136,6 +136,7 @@ glUniform1f(m_parameters[U_LIGHT0_KQ], light[0].Q);
 	meshList[GEO_GROUNDPLANE]->mat.specular = { 10.f, 10.f, 10.f };
 	meshList[GEO_GROUNDPLANE]->mat.shininess = 10.0f;
 
+	/*
 	for (int i = 0; i < 10; ++i)
 	{
 		dbt[i].debugTranslate = { 0,0,0 };
@@ -143,6 +144,7 @@ glUniform1f(m_parameters[U_LIGHT0_KQ], light[0].Q);
 		dbt[i].debugScale = { 1,1,1 };
 		debugRotation[i] = 0;
 	}
+	*/
 }
 
 void ICA::Update(double dt)
@@ -152,7 +154,9 @@ void ICA::Update(double dt)
 
 	camera.update(dt);
 
-	if (astate == JUMP)
+	switch (astate)
+	{
+	case JUMP:
 	{
 		float sineTemp = glm::sin(jumpSine);
 		playerPos.y = sineTemp*5;
@@ -170,17 +174,44 @@ void ICA::Update(double dt)
 			-glm::sin(glm::radians(playerRotate)) * 0.1 };
 		playerPos -= pdelta;
 	}
-	if (astate == DANCE)
-	{
+		break;
+
+	case DANCE:
 		handRotate = glm::sin(handWave)*45;
 		walk = handRotate;
 		rightArmRotate = handRotate;
 		leftArmRotate = -handRotate;
 		handWave += dt * 3;
-	}
-	if (astate == WALK)
-	{
+		break;
+	
+	case WALK:
 		walk = sin(walkCycle) * 30;
+		break;
+
+	case RELOAD:
+		if (rightArmRotate < -56 && !reloaded)
+			rightArmRotate += 2;
+		if (elbowOffset > -30 && !reloaded)
+		{
+			elbowOffset -= 2;
+			elbowDownRotate = elbowOffset;
+		}
+		else
+		{
+			reloaded = true;
+			elbowDownRotate = elbowOffset + glm::sin(reloadSine) * 5;
+			if (reloadSine < glm::radians(360 * 3.f))
+				reloadSine += dt * 16;
+			else
+			{
+				if (rightArmRotate > -72 && reloaded)
+					rightArmRotate -= 2;
+				if (elbowOffset < 0 && reloaded)
+					elbowOffset += 2;
+				else
+					astate = WALK;
+			}
+		}
 	}
 }
 
@@ -511,6 +542,7 @@ void ICA::Render()
 				modelStack.PushMatrix(); // Lower Arm
 				modelStack.Translate(0, 0, 2.1f);
 				modelStack.Rotate(-56.f,0,1,0);
+				modelStack.Rotate(elbowDownRotate, 0, 1, 0);
 				{
 					modelStack.PushMatrix();
 					modelStack.Rotate(90,1,0,0);
@@ -868,6 +900,8 @@ void ICA::HandleKeyPress(double dt)
 	if (in->IsKeyDown(GLFW_KEY_K))
 		delta.z = -1;
 	light[0].position += delta;
+	/*
+	
     if (in->IsKeyPressed(GLFW_KEY_KP_1))
     {
         debug = &dbt[dbtindex].debugTranslate;
@@ -934,6 +968,7 @@ void ICA::HandleKeyPress(double dt)
 		*debug = {0,0,0};
 	if (in->IsKeyPressed(GLFW_KEY_KP_DECIMAL))
 		debugRotation[dbtindex] = 0;
+	*/
 	if (in->IsKeyDown(GLFW_KEY_A))
 		playerRotate += 3;
 	if (in->IsKeyDown(GLFW_KEY_D))
@@ -981,6 +1016,15 @@ void ICA::HandleKeyPress(double dt)
 	}
 	if (in->IsKeyPressed(GLFW_KEY_8))
 	{
+		reloadSine = 0;
+		rightArmRotate = -72;
+		leftArmRotate = 52;
+		reloaded = false;
+		astate = RELOAD;
+	}
+	if (in->IsKeyPressed(GLFW_KEY_9))
+	{
+		astate = WALK;
 		jumpSine = 0;
 		handWave = 0;
 		handRotate = 0;
@@ -995,6 +1039,10 @@ void ICA::HandleKeyPress(double dt)
 		walkCycle = 0;
 		playerPos = { 0,0,0 };
 		kneeBend = 0;
+		reloadSine = 0;
+		elbowDownRotate = 0;
+		elbowOffset = 0;
+		reloaded = false;
 	}
 }
 

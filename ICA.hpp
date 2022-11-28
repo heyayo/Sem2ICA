@@ -48,7 +48,8 @@ public:
 	{
 		WALK,
 		DANCE,
-		JUMP
+		JUMP,
+		RELOAD,
 	};
 
 	ICA();
@@ -82,14 +83,16 @@ private:
 	void RenderMesh(Mesh* mesh, bool enableLight = true);
 	Light light[1];
 	bool enableLight = true;
+	/*
     float debugRotation[10];
 	DEBUGTRANSFORMS dbt[10];
+    glm::vec3* debug = &dbt[0].debugTranslate;
 	unsigned dbtindex = 0;
+	*/
 	float walkCycle = 0;
 	glm::vec3 playerPos{0,0,0};
 	float playerRotate = 0;
 	float playerDist = 0;
-    glm::vec3* debug = &dbt[0].debugTranslate;
 	
 	float leftArmRotate = 52;
 	float rightArmRotate = -72;
@@ -103,5 +106,9 @@ private:
 	float bodyRotate = 0;
 	float footRotate = 0;
 	float kneeBend = 0;
+	float reloadSine = 0;
+	float elbowDownRotate = 0;
+	float elbowOffset = 0;
+	bool reloaded = false;
 };
 #endif
