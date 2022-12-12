@@ -1,12 +1,13 @@
 #ifndef SCENE_1_H
 #define SCENE_1_H
 
-#include "GameObject.h"
+#include "player.hpp"
 #include "Vector3.h"
 #include "Scene.h"
 #include "Mesh.h"
 #include "MatrixStack.h"
 #include "Camera.h"
+#include <vector>
 
 class Scene1 : public Scene
 {
@@ -26,6 +27,13 @@ public:
 		U_TOTAL,
 	};
 
+	enum WaveType
+	{
+		GRID,
+		CORNERFAN,
+		DIRECT
+	};
+
 	Scene1();
 	~Scene1();
 
@@ -38,6 +46,7 @@ private:
 	void HandleKeyPress();
 	void RenderMesh(Mesh* mesh, bool enableLight);
 	void BorderCollision(GameObject& a);
+	void Wave();
 
 	unsigned m_vertexArrayID;
 	Mesh* meshList[NUM_GEOMETRY];
@@ -47,7 +56,10 @@ private:
 
 	float m_worldWidth;
 	float m_worldHeight;
-	GameObject* player;
+	rBounded* player;
+	std::vector<timedRBounded*> projectiles;
+	WaveType wave;
+	float waveTime;
 
 	Camera camera;
 

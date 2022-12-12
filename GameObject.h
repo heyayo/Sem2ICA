@@ -2,6 +2,8 @@
 #define GAME_OBJECT_H
 #include "Vector3.h"
 #include "Mesh.h"
+#include "physics.hpp"
+
 struct GameObject
 {
 	Mesh* mesh;

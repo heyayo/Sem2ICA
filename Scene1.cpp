@@ -26,10 +26,53 @@ void Scene1::BorderCollision(GameObject& a)
 Scene1::Scene1()
 {
 	player = NULL;
+	wave = GRID;
 }
 
 Scene1::~Scene1()
 {
+	for (auto& x : projectiles)
+	{
+		delete x;
+		x = nullptr;
+	}
+	projectiles.clear();
+}
+
+void Scene1::Wave()
+{
+	std::cout << waveTime << std::endl;
+	if (waveTime < 1) return;
+	switch (wave)
+	{
+		case GRID:
+		{
+		float scale = static_cast<float>(rand()%10);
+		int wDispersion = m_worldWidth / 10;
+		int hDispersion = m_worldHeight / 10;
+		for (int i = 0; i < 10; ++i)
+		{
+			radial newBound;
+			newBound.position = {static_cast<float>(i*wDispersion),m_worldHeight,0};
+			newBound.radius = scale;
+			
+			timedRBounded* newBullet = new timedRBounded(meshList[GEO_BALL],newBound,4);
+			newBullet->pos = newBound.position;
+			newBullet->scale = {scale,scale,scale};
+			newBullet->ActOn(10,180);
+			projectiles.push_back(newBullet);
+			
+			newBullet = new timedRBounded(meshList[GEO_BALL],newBound,4);
+			newBound.position = {0,static_cast<float>(i*hDispersion),0};
+			newBullet->pos = newBound.position;
+			newBullet->scale = {scale,scale,scale};
+			newBullet->ActOn(10,90);
+			projectiles.push_back(newBullet);
+		}
+		}
+		break;
+	}
+	waveTime = 0;
 }
 
 void Scene1::Init()
@@ -72,12 +115,15 @@ void Scene1::Init()
 
 	meshList[GEO_AXES] = MeshBuilder::GenerateAxes("Axes", 10000.f, 10000.f, 10000.f);
 	meshList[GEO_BALL] = MeshBuilder::GenerateSphere("Sphere", Color(1.0f, 1.0f, 1.0f), 10, 10, 1.f);
-	player = new GameObject(meshList[GEO_BALL]);
+	player = new rBounded(meshList[GEO_BALL], {});
 	player->pos = {m_worldWidth/2.f,m_worldWidth/2.f,0};
+	player->bounds.position = player->pos;
+	player->bounds.radius = player->scale.x;
 }
 
 void Scene1::Update(double dt)
 {
+	Wave();
 	// Check for key press, you can add more for interaction
 	HandleKeyPress();
 
@@ -99,7 +145,19 @@ void Scene1::Update(double dt)
 	// need all the forces to reset
 	force.SetZero();
 
+	player->bounds.position = player->pos;
+
 	BorderCollision(*player);
+	for (int i = 0; i < projectiles.size(); ++i)
+	{
+		auto& proj = projectiles[i];
+		if (proj->timeSinceAlive >= proj->lifetime)
+		{
+			delete projectiles[i];
+			projectiles[i] = nullptr;
+			projectiles.erase(projectiles.begin() + i);
+		}
+	}
 }
 
 void Scene1::Render()
@@ -178,6 +236,8 @@ void Scene1::HandleKeyPress()
 		// Key press to enable wireframe mode for the polygon
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode
 	}
+	if (Application::IsKeyPressed(GLFW_KEY_I))
+	waveTime = 2;
 
 	// Up button
 	force.x = Application::IsKeyPressed(GLFW_KEY_RIGHT) - Application::IsKeyPressed(GLFW_KEY_LEFT);
