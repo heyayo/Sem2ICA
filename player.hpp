@@ -4,6 +4,7 @@ struct rBounded : public GameObject
 {
     radial bounds;
     Vector3 force;
+	float multiplier;
 
     void ActOn(float strength, float direction);
     rBounded(Mesh* giveMesh, radial newBounds);

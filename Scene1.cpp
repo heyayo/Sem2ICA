@@ -41,13 +41,13 @@ Scene1::~Scene1()
 
 void Scene1::Wave()
 {
-	std::cout << waveTime << std::endl;
-	if (waveTime < 1) return;
+	std::cout << projectiles.size() << waveTime << std::endl;
+	if (waveTime < 5) return;
 	switch (wave)
 	{
 		case GRID:
 		{
-		float scale = static_cast<float>(rand()%10);
+		float scale = static_cast<float>(rand()%2);
 		int wDispersion = m_worldWidth / 10;
 		int hDispersion = m_worldHeight / 10;
 		for (int i = 0; i < 10; ++i)
@@ -56,19 +56,62 @@ void Scene1::Wave()
 			newBound.position = {static_cast<float>(i*wDispersion),m_worldHeight,0};
 			newBound.radius = scale;
 			
-			timedRBounded* newBullet = new timedRBounded(meshList[GEO_BALL],newBound,4);
+			timedRBounded* newBullet = new timedRBounded(meshList[GEO_BALL],newBound,3);
 			newBullet->pos = newBound.position;
 			newBullet->scale = {scale,scale,scale};
-			newBullet->ActOn(10,180);
+			newBullet->ActOn(100,180);
+			newBullet->mass = 1.f;
+			newBullet->multiplier = 1/newBullet->mass;
+			newBullet->timeSinceAlive = 0;
 			projectiles.push_back(newBullet);
 			
-			newBullet = new timedRBounded(meshList[GEO_BALL],newBound,4);
+			newBullet = new timedRBounded(meshList[GEO_BALL],newBound,3);
 			newBound.position = {0,static_cast<float>(i*hDispersion),0};
 			newBullet->pos = newBound.position;
 			newBullet->scale = {scale,scale,scale};
-			newBullet->ActOn(10,90);
+			newBullet->ActOn(100,90);
+			newBullet->mass = 1.f;
+			newBullet->multiplier = 1/newBullet->mass;
+			newBullet->timeSinceAlive = 0;
 			projectiles.push_back(newBullet);
 		}
+		}
+		break;
+		case CORNERFAN:
+		{
+			int density = rand()%30;
+			int corner = rand()%4;
+			int angle = corner * 90;
+			float angleIncrease = 90.f/density;
+			Vector3 cornerLocation{};
+			switch (angle)
+			{
+				case 0:
+					cornerLocation = {0,0,0};
+					break;
+				case 1:
+					cornerLocation = {0,m_worldHeight,0};
+					break;
+				case 2:
+					cornerLocation = {m_worldWidth,m_worldHeight,0};
+					break;
+				case 3:
+					cornerLocation = {m_worldWidth,0,0};
+					break;
+			}
+			for (int i = 0; i < density; ++i)
+			{
+				radial bounds;
+				bounds.position = cornerLocation;
+				bounds.radius = 1;
+				timedRBounded* projectile = new timedRBounded(meshList[GEO_BALL],bounds,3);
+				projectile->mass = 1.f;
+				projectile->multiplier = 1/projectile->mass;
+				projectile->scale = {1,1,1};
+				projectile->pos = bounds.position;
+				projectile->ActOn(100,angle + (angleIncrease*i));
+				projectiles.push_back(projectile);
+			}
 		}
 		break;
 	}
@@ -119,10 +162,12 @@ void Scene1::Init()
 	player->pos = {m_worldWidth/2.f,m_worldWidth/2.f,0};
 	player->bounds.position = player->pos;
 	player->bounds.radius = player->scale.x;
+	multiplier = 1.0f / player->mass;
 }
 
 void Scene1::Update(double dt)
 {
+	waveTime += dt;
 	Wave();
 	// Check for key press, you can add more for interaction
 	HandleKeyPress();
@@ -131,7 +176,6 @@ void Scene1::Update(double dt)
 
 	//Calculate the resulting acceleration
 	// F = ma
-	multiplier = 1.0f / player->mass;
 	acc = force * multiplier;
 	temp = player->vel;
 
@@ -151,6 +195,12 @@ void Scene1::Update(double dt)
 	for (int i = 0; i < projectiles.size(); ++i)
 	{
 		auto& proj = projectiles[i];
+		proj->timeSinceAlive += dt;
+		auto initialVelocity = proj->vel;
+		proj->vel += static_cast<float>(dt) * time_scale * (proj->force * proj->multiplier);
+		proj->pos += 0.5f * static_cast<float>(dt) * time_scale * (initialVelocity + proj->vel);
+		proj->force.SetZero();
+		proj->bounds.position = proj->pos;
 		if (proj->timeSinceAlive >= proj->lifetime)
 		{
 			delete projectiles[i];
@@ -189,6 +239,15 @@ void Scene1::Render()
 	//meshList[GEO_BALL]->material.kAmbient.Set(go->color.x, go->color.y, go->color.z);
 	RenderMesh(meshList[GEO_BALL], false);
 	modelStack.PopMatrix();
+
+	for (const auto& proj : projectiles)
+	{
+	modelStack.PushMatrix();
+		modelStack.Translate(proj->pos.x,proj->pos.y,0);
+		modelStack.Scale(proj->scale.x,proj->scale.y,proj->scale.z);
+		RenderMesh(proj->mesh,false);
+	modelStack.PopMatrix();
+	}
 }
 
 void Scene1::RenderMesh(Mesh* mesh, bool enableLight)
@@ -236,8 +295,6 @@ void Scene1::HandleKeyPress()
 		// Key press to enable wireframe mode for the polygon
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode
 	}
-	if (Application::IsKeyPressed(GLFW_KEY_I))
-	waveTime = 2;
 
 	// Up button
 	force.x = Application::IsKeyPressed(GLFW_KEY_RIGHT) - Application::IsKeyPressed(GLFW_KEY_LEFT);

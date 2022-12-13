@@ -1,4 +1,5 @@
 #include "player.hpp"
+#include "MyMath.h"
 
 rBounded::rBounded(Mesh* giveMesh, radial newBounds)
 : GameObject(giveMesh), bounds(newBounds)
@@ -6,8 +7,10 @@ rBounded::rBounded(Mesh* giveMesh, radial newBounds)
 
 void rBounded::ActOn(float strength, float direction)
 {
-    float x = sin(direction)*strength;
-    float y = cos(direction)*strength;
+	auto radianDirection = Math::DegreeToRadian(direction);
+    float x = sin(radianDirection)*strength;
+    float y = cos(radianDirection)*strength;
+
     force = {x,y,0};
 }
 
