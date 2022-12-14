@@ -41,15 +41,15 @@ Scene1::~Scene1()
 
 void Scene1::Wave()
 {
-	std::cout << projectiles.size() << waveTime << std::endl;
-	if (waveTime < 5) return;
+	if (waveTime < waveFrequency) return;
+	wave = static_cast<WaveType>(rand()%3);
 	switch (wave)
 	{
 		case GRID:
 		{
-		float scale = static_cast<float>(rand()%2);
-		int wDispersion = m_worldWidth / 10;
-		int hDispersion = m_worldHeight / 10;
+		const float scale = static_cast<float>(rand()%2);
+		const int wDispersion = m_worldWidth / 10;
+		const int hDispersion = m_worldHeight / 10;
 		for (int i = 0; i < 10; ++i)
 		{
 			radial newBound;
@@ -79,12 +79,12 @@ void Scene1::Wave()
 		break;
 		case CORNERFAN:
 		{
-			int density = rand()%30;
-			int corner = rand()%4;
-			int angle = corner * 90;
-			float angleIncrease = 90.f/density;
+			const int density = (rand()%20) + 10;
+			const int corner = rand()%4;
+			const int angle = corner * 90;
+			const float angleIncrease = 90.f/density;
 			Vector3 cornerLocation{};
-			switch (angle)
+			switch (corner)
 			{
 				case 0:
 					cornerLocation = {0,0,0};
@@ -104,7 +104,7 @@ void Scene1::Wave()
 				radial bounds;
 				bounds.position = cornerLocation;
 				bounds.radius = 1;
-				timedRBounded* projectile = new timedRBounded(meshList[GEO_BALL],bounds,3);
+				timedRBounded* projectile = new timedRBounded(meshList[GEO_BALL],bounds,5);
 				projectile->mass = 1.f;
 				projectile->multiplier = 1/projectile->mass;
 				projectile->scale = {1,1,1};
@@ -114,7 +114,22 @@ void Scene1::Wave()
 			}
 		}
 		break;
+		case DIRECT:
+		{
+			radial bounds;
+			bounds.position = {};
+			bounds.radius = 1;
+			timedRBounded* proj = new timedRBounded(meshList[GEO_BALL],bounds,5);
+			proj->mass = 1.f;
+			proj->multiplier = 1/proj->mass;
+			proj->scale = {1,1,1};
+			proj->pos = bounds.position;
+			proj->ActOn(500,proj->DirectionTo(player->pos));
+			projectiles.push_back(proj);
+		}
+		break;
 	}
+	waveFrequency = static_cast<float>((rand()%3) + 2);
 	waveTime = 0;
 }
 
@@ -299,5 +314,8 @@ void Scene1::HandleKeyPress()
 	// Up button
 	force.x = Application::IsKeyPressed(GLFW_KEY_RIGHT) - Application::IsKeyPressed(GLFW_KEY_LEFT);
 	force.y = Application::IsKeyPressed(GLFW_KEY_UP) - Application::IsKeyPressed(GLFW_KEY_DOWN);
+
+	if (Application::IsKeyPressed(GLFW_KEY_TAB))
+		wave = CORNERFAN;
 
 }

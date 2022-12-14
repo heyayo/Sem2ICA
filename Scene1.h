@@ -60,6 +60,7 @@ private:
 	std::vector<timedRBounded*> projectiles;
 	WaveType wave;
 	float waveTime;
+	float waveFrequency = 5;
 
 	Camera camera;
 

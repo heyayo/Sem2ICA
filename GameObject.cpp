@@ -1,4 +1,6 @@
 #include "GameObject.h"
+#include "MyMath.h"
+#include <cmath>
 
 GameObject::GameObject(Mesh* giveMesh)
 	: mesh(giveMesh),
@@ -9,5 +11,14 @@ GameObject::GameObject(Mesh* giveMesh)
 
 GameObject::~GameObject()
 {
+}
+
+float GameObject::DirectionTo(const Vector3& target)
+{
+	auto direction = target-pos;
+	float angle = (direction.x) / direction.Length();
+	angle = std::asin(angle);
+	angle = Math::RadianToDegree(angle);
+	return angle;
 }
 

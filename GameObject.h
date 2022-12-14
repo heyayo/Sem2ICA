@@ -15,6 +15,8 @@ struct GameObject
 
 	GameObject(Mesh* giveMesh);
 	~GameObject();
+
+	float DirectionTo(const Vector3& target);
 };
 #endif
 
