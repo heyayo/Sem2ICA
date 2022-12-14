@@ -22,3 +22,12 @@ float GameObject::DirectionTo(const Vector3& target)
 	return angle;
 }
 
+void GameObject::ActOn(float strength, float direction)
+{
+	auto radianDirection = Math::DegreeToRadian(direction);
+    float x = sin(radianDirection)*strength;
+    float y = cos(radianDirection)*strength;
+
+    force = {x,y,0};
+}
+

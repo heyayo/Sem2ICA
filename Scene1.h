@@ -7,7 +7,10 @@
 #include "Mesh.h"
 #include "MatrixStack.h"
 #include "Camera.h"
+#include <algorithm>
 #include <vector>
+#include <queue>
+#include <memory>
 
 class Scene1 : public Scene
 {
@@ -31,7 +34,8 @@ public:
 	{
 		GRID,
 		CORNERFAN,
-		DIRECT
+		DIRECT,
+		CENTER,
 	};
 
 	Scene1();
@@ -47,6 +51,7 @@ private:
 	void RenderMesh(Mesh* mesh, bool enableLight);
 	void BorderCollision(GameObject& a);
 	void Wave();
+	void ResetGame();
 
 	unsigned m_vertexArrayID;
 	Mesh* meshList[NUM_GEOMETRY];
@@ -56,9 +61,11 @@ private:
 
 	float m_worldWidth;
 	float m_worldHeight;
-	rBounded* player;
-	std::vector<timedRBounded*> projectiles;
-	WaveType wave;
+	std::unique_ptr<rBounded> player;
+	int playerLives = 5;
+	std::vector<std::unique_ptr<timedRBounded>> projectiles;
+	std::vector<std::unique_ptr<timedQBounded>> quadProjectiles;
+	std::queue<WaveType> waves;
 	float waveTime;
 	float waveFrequency = 5;
 

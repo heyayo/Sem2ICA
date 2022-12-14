@@ -1,4 +1,5 @@
 #include "physics.hpp"
+#include <cmath>
 
         bool radius(const radial& a, const radial& b)
         {
@@ -23,12 +24,12 @@
 		}
         bool squareradius(const Quad& a, const radial& b)
         {
-			float xDist = b.position.x - a.position.x;
-			float yDist = b.position.y - a.position.y;
+			float xDist = std::fabs(b.position.x - a.position.x);
+			float yDist = std::fabs(b.position.y - a.position.y);
 
 			float xColDist = (a.size.x * 0.5f) + b.radius;
 			float yColDist = (a.size.y * 0.5f) + b.radius;
 			//std::cout << xDist << ',' << yDist << ',' << xColDist << ',' << yColDist << std::endl;
 			
-			return !(xDist > xColDist || yDist > yColDist);
+			return (xDist <= xColDist && yDist <= yColDist);
 		}

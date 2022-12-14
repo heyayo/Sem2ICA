@@ -6,6 +6,7 @@
 #include "MeshBuilder.h"
 #include "Mtx44.h"
 #include "GLFW/glfw3.h"
+#include <memory>
 
 #define time_scale 5
 
@@ -25,29 +26,55 @@ void Scene1::BorderCollision(GameObject& a)
 
 Scene1::Scene1()
 {
-	player = NULL;
-	wave = GRID;
 }
 
 Scene1::~Scene1()
 {
-	for (auto& x : projectiles)
-	{
-		delete x;
-		x = nullptr;
-	}
 	projectiles.clear();
 }
 
 void Scene1::Wave()
 {
+	if (waves.empty())
+	{
+	const int waveCount = (rand()%5)+1;
+	for (int i = 0; i < waveCount; ++i)
+	{
+		const WaveType pregen = static_cast<WaveType>(rand()%4);
+		if (pregen == CORNERFAN)
+		{
+			const int burst = rand()%5;
+			if (burst <= 0)
+			{
+				for (int j = 0; j < waveCount-i; ++j)
+				{
+					waves.push(CORNERFAN);
+				}
+			}
+			break;
+		}
+		if (pregen == CENTER)
+		{
+			const int burst = rand()%5;
+			if (burst <= 0)
+			{
+				for (int j = 0; j < waveCount-i; j++)
+				{
+					waves.push(CENTER);
+				}
+			}
+			break;
+		}
+		waves.push(pregen);
+	}
+	}
 	if (waveTime < waveFrequency) return;
-	wave = static_cast<WaveType>(rand()%3);
-	switch (wave)
+	switch (waves.front())
 	{
 		case GRID:
 		{
-		const float scale = static_cast<float>(rand()%2);
+			std::cout << "GRID" << std::endl;
+		const float scale = static_cast<float>((rand()%2)+1);
 		const int wDispersion = m_worldWidth / 10;
 		const int hDispersion = m_worldHeight / 10;
 		for (int i = 0; i < 10; ++i)
@@ -56,29 +83,30 @@ void Scene1::Wave()
 			newBound.position = {static_cast<float>(i*wDispersion),m_worldHeight,0};
 			newBound.radius = scale;
 			
-			timedRBounded* newBullet = new timedRBounded(meshList[GEO_BALL],newBound,3);
+			std::unique_ptr<timedRBounded> newBullet = std::make_unique<timedRBounded>(meshList[GEO_BALL],newBound,3);
 			newBullet->pos = newBound.position;
 			newBullet->scale = {scale,scale,scale};
-			newBullet->ActOn(100,180);
+			newBullet->ActOn(300-(scale*20),180);
 			newBullet->mass = 1.f;
 			newBullet->multiplier = 1/newBullet->mass;
 			newBullet->timeSinceAlive = 0;
-			projectiles.push_back(newBullet);
+			projectiles.push_back(std::move(newBullet));
 			
-			newBullet = new timedRBounded(meshList[GEO_BALL],newBound,3);
+			std::unique_ptr<timedRBounded> newBullet2 = std::make_unique<timedRBounded>(meshList[GEO_BALL],newBound,3);
 			newBound.position = {0,static_cast<float>(i*hDispersion),0};
-			newBullet->pos = newBound.position;
-			newBullet->scale = {scale,scale,scale};
-			newBullet->ActOn(100,90);
-			newBullet->mass = 1.f;
-			newBullet->multiplier = 1/newBullet->mass;
-			newBullet->timeSinceAlive = 0;
-			projectiles.push_back(newBullet);
+			newBullet2->pos = newBound.position;
+			newBullet2->scale = {scale,scale,scale};
+			newBullet2->ActOn(300-(20*scale),90);
+			newBullet2->mass = 1.f;
+			newBullet2->multiplier = 1/newBullet2->mass;
+			newBullet2->timeSinceAlive = 0;
+			projectiles.push_back(std::move(newBullet2));
 		}
 		}
 		break;
 		case CORNERFAN:
 		{
+			std::cout << "CORNERFAN" << std::endl;
 			const int density = (rand()%20) + 10;
 			const int corner = rand()%4;
 			const int angle = corner * 90;
@@ -104,33 +132,75 @@ void Scene1::Wave()
 				radial bounds;
 				bounds.position = cornerLocation;
 				bounds.radius = 1;
-				timedRBounded* projectile = new timedRBounded(meshList[GEO_BALL],bounds,5);
+				std::unique_ptr<timedRBounded> projectile = std::make_unique<timedRBounded>(meshList[GEO_BALL],bounds,5);
 				projectile->mass = 1.f;
 				projectile->multiplier = 1/projectile->mass;
 				projectile->scale = {1,1,1};
 				projectile->pos = bounds.position;
 				projectile->ActOn(100,angle + (angleIncrease*i));
-				projectiles.push_back(projectile);
+				projectiles.push_back(std::move(projectile));
 			}
 		}
 		break;
 		case DIRECT:
 		{
+			std::cout << "DIRECT" << std::endl;
 			radial bounds;
 			bounds.position = {};
-			bounds.radius = 1;
-			timedRBounded* proj = new timedRBounded(meshList[GEO_BALL],bounds,5);
+			bounds.radius = 2;
+			const int shots = (rand()%9)+3;
+			const int dispersion = (rand()%10)+1;
+			const float dispersionAngle = 10.f;
+			const float lowAngle = -(dispersionAngle * shots/2);
+			for (int j = 0; j < dispersion; ++j)
+			{
+				const float shootAngle = lowAngle + (j*dispersionAngle);
+			for (int i = 0; i < shots; ++i)
+			{
+				std::unique_ptr<timedRBounded> proj = std::make_unique<timedRBounded>(meshList[GEO_BALL],bounds,5);
 			proj->mass = 1.f;
 			proj->multiplier = 1/proj->mass;
-			proj->scale = {1,1,1};
+			proj->scale = {2,2,1};
 			proj->pos = bounds.position;
-			proj->ActOn(500,proj->DirectionTo(player->pos));
-			projectiles.push_back(proj);
+			proj->ActOn(100 + (100*i),proj->DirectionTo(player->pos)+shootAngle);
+			projectiles.push_back(std::move(proj));
+			}
+			}
+		}
+		break;
+		case CENTER:
+		{
+			std::cout << "CENTER" << std::endl;
+			const float scale = static_cast<float>((rand()%4)+1);
+			Quad bounds;
+			bounds.size = {1,1,1};
+			for (int i = 0; i < 25; ++i)
+			{
+			std::unique_ptr<timedQBounded> proj = std::make_unique<timedQBounded>(meshList[GEO_CUBE],bounds,4);
+			proj->mass = 1.f;
+			proj->multiplier = 1/proj->mass;
+			proj->scale = {scale,scale,scale};
+			proj->pos = {player->pos.x,m_worldHeight + (i*5),0};
+			proj->ActOn(400 - (scale * 20), 180);
+			quadProjectiles.push_back(std::move(proj));
+			std::unique_ptr<timedQBounded> proj2 = std::make_unique<timedQBounded>(meshList[GEO_CUBE],bounds,4);
+			proj2->mass = 1.f;
+			proj2->multiplier = 1/proj2->mass;
+			proj2->scale = {scale,scale,scale};
+			proj2->pos = {0.f - (i*5), player->pos.y,0};
+			proj2->ActOn(400 - (scale * 20), 90);
+			quadProjectiles.push_back(std::move(proj2));
+			}
 		}
 		break;
 	}
-	waveFrequency = static_cast<float>((rand()%3) + 2);
+	WaveType save = waves.front();
+	waves.pop();
 	waveTime = 0;
+	if (waves.front() == save)
+		waveFrequency = 0.4;
+	else
+		waveFrequency = (rand()%3)+1;
 }
 
 void Scene1::Init()
@@ -140,7 +210,7 @@ void Scene1::Init()
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
 
 	// Set background color to dark blue
-	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 	//Enable depth buffer and depth testing
 	glEnable(GL_DEPTH_TEST);
@@ -173,10 +243,12 @@ void Scene1::Init()
 
 	meshList[GEO_AXES] = MeshBuilder::GenerateAxes("Axes", 10000.f, 10000.f, 10000.f);
 	meshList[GEO_BALL] = MeshBuilder::GenerateSphere("Sphere", Color(1.0f, 1.0f, 1.0f), 10, 10, 1.f);
-	player = new rBounded(meshList[GEO_BALL], {});
+	meshList[GEO_CUBE] = MeshBuilder::GenerateCube("COOBE",{1,1,1});
+	player = std::make_unique<rBounded>(meshList[GEO_BALL], radial{});
 	player->pos = {m_worldWidth/2.f,m_worldWidth/2.f,0};
+	player->scale = {1,1,1};
 	player->bounds.position = player->pos;
-	player->bounds.radius = player->scale.x;
+	player->bounds.radius = player->scale.x * 2;
 	multiplier = 1.0f / player->mass;
 }
 
@@ -191,6 +263,8 @@ void Scene1::Update(double dt)
 
 	//Calculate the resulting acceleration
 	// F = ma
+	//Apply Reverse Force
+	force += -player->vel;
 	acc = force * multiplier;
 	temp = player->vel;
 
@@ -216,13 +290,58 @@ void Scene1::Update(double dt)
 		proj->pos += 0.5f * static_cast<float>(dt) * time_scale * (initialVelocity + proj->vel);
 		proj->force.SetZero();
 		proj->bounds.position = proj->pos;
+		if (radius(proj->bounds,player->bounds))
+		{
+			std::cout << "HIT" << std::endl;
+			projectiles.erase(projectiles.begin() + i);
+			--playerLives;
+			if (playerLives <= 0)
+			{
+				ResetGame();
+				break;
+			}
+			continue;
+		}
 		if (proj->timeSinceAlive >= proj->lifetime)
 		{
-			delete projectiles[i];
-			projectiles[i] = nullptr;
 			projectiles.erase(projectiles.begin() + i);
 		}
 	}
+	for (int i = 0; i < quadProjectiles.size(); ++i)
+	{
+		auto& p = quadProjectiles[i];
+		p->timeSinceAlive += dt;
+		auto initialVelocity = p->vel;
+		p->vel += static_cast<float>(dt) * time_scale * (p->force * p->multiplier);
+		p->pos += 0.5f * static_cast<float>(dt) * time_scale * (initialVelocity + p->vel);
+		p->force.SetZero();
+		p->bounds.position = p->pos;
+		if (squareradius(p->bounds,player->bounds))
+		{
+			std::cout << "HIT" << std::endl;
+			quadProjectiles.erase(quadProjectiles.begin() + i);
+			--playerLives;
+			if (playerLives <= 0)
+			{ResetGame(); break;}
+			continue;
+		}
+		if (p->timeSinceAlive >= p->lifetime)
+			quadProjectiles.erase(quadProjectiles.begin() + i);
+	}
+}
+
+void Scene1::ResetGame()
+{
+	projectiles.clear();
+	quadProjectiles.clear();
+	player->pos = {m_worldWidth/2.f,m_worldHeight/2.f,0};
+	player->vel = {};
+	player->force = {};
+	waveTime = 0;
+	for (int i = 0; i < waves.size(); ++i)
+		waves.pop();
+	playerLives = 5;
+	std::cout << "LOSE" << std::endl;
 }
 
 void Scene1::Render()
@@ -262,6 +381,14 @@ void Scene1::Render()
 		modelStack.Scale(proj->scale.x,proj->scale.y,proj->scale.z);
 		RenderMesh(proj->mesh,false);
 	modelStack.PopMatrix();
+	}
+	for (const auto& proj : quadProjectiles)
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(proj->pos.x,proj->pos.y,0);
+		modelStack.Scale(proj->scale.x,proj->scale.y,proj->scale.z);
+		RenderMesh(proj->mesh,false);
+		modelStack.PopMatrix();
 	}
 }
 
@@ -314,8 +441,9 @@ void Scene1::HandleKeyPress()
 	// Up button
 	force.x = Application::IsKeyPressed(GLFW_KEY_RIGHT) - Application::IsKeyPressed(GLFW_KEY_LEFT);
 	force.y = Application::IsKeyPressed(GLFW_KEY_UP) - Application::IsKeyPressed(GLFW_KEY_DOWN);
+	force *= 5;
 
 	if (Application::IsKeyPressed(GLFW_KEY_TAB))
-		wave = CORNERFAN;
+		std::cout << projectiles.size() << std::endl;
 
 }

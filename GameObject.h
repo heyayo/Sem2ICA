@@ -12,10 +12,13 @@ struct GameObject
 	Vector3 scale;
 	bool active;
 	float mass;
+    Vector3 force;
+	float multiplier;
 
 	GameObject(Mesh* giveMesh);
 	~GameObject();
 
+    void ActOn(float strength, float direction);
 	float DirectionTo(const Vector3& target);
 };
 #endif
