@@ -3,7 +3,6 @@
 
 #include <string>
 #include "Material.hpp"
-
 /******************************************************************************/
 /*!
 		Class Mesh:
@@ -30,6 +29,7 @@ public:
 	unsigned indexBuffer;
 	unsigned indexSize;
 	Material mat;
+	unsigned textureID;
 };
 
 #endif

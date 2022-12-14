@@ -42,7 +42,7 @@ void ICA::Init()
 
 	// Load the shader programs
 	m_programID = LoadShaders("Shader//Shading.vertexshader",
-								"Shader//Shading.fragmentshader");
+								"Shader//LSource.fragmentshader");
 	glUseProgram(m_programID);
 
 	// Get a handle for our "MVP" uniform
@@ -53,26 +53,38 @@ void ICA::Init()
 	m_parameters[U_MATERIAL_DIFFUSE] = glGetUniformLocation(m_programID, "material.kDiffuse");
 	m_parameters[U_MATERIAL_SPECULAR] = glGetUniformLocation(m_programID, "material.kSpecular");
 	m_parameters[U_MATERIAL_SHININESS] = glGetUniformLocation(m_programID,"material.kShininess");
+	m_parameters[U_LIGHT0_TYPE] = glGetUniformLocation(m_programID, "lights[0].type");
 	m_parameters[U_LIGHT0_POSITION] = glGetUniformLocation(m_programID,"lights[0].position_cameraspace");
 	m_parameters[U_LIGHT0_COLOR] = glGetUniformLocation(m_programID, "lights[0].color");
 	m_parameters[U_LIGHT0_POWER] = glGetUniformLocation(m_programID, "lights[0].power");
 	m_parameters[U_LIGHT0_KC] = glGetUniformLocation(m_programID, "lights[0].kC");
 	m_parameters[U_LIGHT0_KL] = glGetUniformLocation(m_programID, "lights[0].kL");
 	m_parameters[U_LIGHT0_KQ] = glGetUniformLocation(m_programID, "lights[0].kQ");
+m_parameters[U_LIGHT0_SPOTDIRECTION] = glGetUniformLocation(m_programID,"lights[0].spotDirection");	
+m_parameters[U_LIGHT0_COSCUTOFF] = glGetUniformLocation(m_programID, "lights[0].cosCutoff");
+m_parameters[U_LIGHT0_COSINNER] = glGetUniformLocation(m_programID, "lights[0].cosInner");
+m_parameters[U_LIGHT0_EXPONENT] = glGetUniformLocation(m_programID, "lights[0].exponent");
 	m_parameters[U_LIGHTENABLED] = glGetUniformLocation(m_programID, "lightEnabled");
 
+light[0].type = Light::POINT;
 light[0].position = glm::vec3(0, 5, 0);
 light[0].color.Set(1, 1, 1);
 light[0].power = 1;
 light[0].C = 1.f;
 light[0].L = 0.01f;
 light[0].Q = 0.001f;
+light[0].cosCutoff = 45.f; 
+light[0].cosInner = 30.f;
+light[0].exponent = 3.f;	
+light[0].spotDirection = glm::vec3(0.f, 1.f, 0.f);
   
 glUniform3fv(m_parameters[U_LIGHT0_COLOR], 1, &light[0].color.r);
+glUniform1f(m_parameters[U_LIGHT0_TYPE], light[0].type);
 glUniform1f(m_parameters[U_LIGHT0_POWER], light[0].power);
 glUniform1f(m_parameters[U_LIGHT0_KC], light[0].C); 
 glUniform1f(m_parameters[U_LIGHT0_KL], light[0].L); 
 glUniform1f(m_parameters[U_LIGHT0_KQ], light[0].Q); 
+glUniform1f(m_parameters[U_LIGHT0_COSCUTOFF], cosf(glm::radians<float>(light[0].cosCutoff))); glUniform1f(m_parameters[U_LIGHT0_COSINNER], cosf(glm::radians<float>(light[0].cosInner))); glUniform1f(m_parameters[U_LIGHT0_EXPONENT], light[0].exponent);
   
 	glm::mat4 projection = glm::perspective(45.0f,4.f/3.f,0.1f,1000.f);
 	projectionStack.LoadMatrix(projection);
@@ -131,9 +143,9 @@ glUniform1f(m_parameters[U_LIGHT0_KQ], light[0].Q);
 	meshList[GEO_FACESHIELD]->mat.diffuse = { 0.25f, 0.25f, 0.25f };
 	meshList[GEO_FACESHIELD]->mat.specular = { 10.f, 10.f, 10.f };
 	meshList[GEO_FACESHIELD]->mat.shininess = 10.0f;
-	meshList[GEO_GROUNDPLANE]->mat.ambient = { 0.6f, 0.6f, 0.6f };
-	meshList[GEO_GROUNDPLANE]->mat.diffuse = { 0.f, 0.f, 0.f };
-	meshList[GEO_GROUNDPLANE]->mat.specular = { 10.f, 10.f, 10.f };
+	meshList[GEO_GROUNDPLANE]->mat.ambient = { 0.1f, 0.1f, 0.1f };
+	meshList[GEO_GROUNDPLANE]->mat.diffuse = { 0.4f, 0.4f, 0.4f };
+	meshList[GEO_GROUNDPLANE]->mat.specular = { 0.1f, 0.1f, 0.1f };
 	meshList[GEO_GROUNDPLANE]->mat.shininess = 10.0f;
 
 	/*
@@ -227,9 +239,30 @@ void ICA::Render()
 
 	modelStack.LoadIdentity();
 
+if (light[0].type == Light::DIRECTIONAL)
+{
+glm::vec3 lightDir(light[0].position.x, light[0].position.y, light[0].position.z);
+glm::vec3 lightDirection_cameraspace = viewStack.Top() * glm::vec4(lightDir, 0);
+glUniform3fv(m_parameters[U_LIGHT0_POSITION], 1,
+glm::value_ptr(lightDirection_cameraspace));
+} 
+else if (light[0].type == Light::SPOT)
+{
+glm::vec3 lightPosition_cameraspace = viewStack.Top() * glm::vec4(light[0].position, 1);
+glUniform3fv(m_parameters[U_LIGHT0_POSITION], 1,
+glm::value_ptr(lightPosition_cameraspace)); 
+glm::vec3 spotDirection_cameraspace = viewStack.Top() * 
+glm::vec4(light[0].spotDirection, 0);		
+glUniform3fv(m_parameters[U_LIGHT0_SPOTDIRECTION], 1, 
+glm::value_ptr(spotDirection_cameraspace));
+}
+else {
+// Calculate the light position in camera space
+glm::vec3 lightPosition_cameraspace = viewStack.Top() * glm::vec4(light[0].position, 1);
+glUniform3fv(m_parameters[U_LIGHT0_POSITION], 1, 
+glm::value_ptr(lightPosition_cameraspace));
+}
 	glUniform1f(m_parameters[U_LIGHT0_POWER], light[0].power);
-	glm::vec3 lightPosition_cameraspace = viewStack.Top() * glm::vec4(light[0].position, 1);
-	glUniform3fv(m_parameters[U_LIGHT0_POSITION], 1, glm::value_ptr(lightPosition_cameraspace));
 
 	modelStack.PushMatrix();
 	modelStack.Translate(light[0].position);
@@ -1043,6 +1076,17 @@ void ICA::HandleKeyPress(double dt)
 		elbowDownRotate = 0;
 		elbowOffset = 0;
 		reloaded = false;
+	}
+	if (in->IsKeyPressed(GLFW_KEY_V))
+	{
+		if (light[0].type == Light::SPOT)
+			light[0].type = Light::POINT;
+		else
+		{
+			auto temp = (int)light[0].type;
+			++temp;
+			light[0].type = (Light::LIGHT_TYPE)temp;
+		}
 	}
 }
 

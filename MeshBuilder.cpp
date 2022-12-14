@@ -76,10 +76,10 @@ Mesh* MeshBuilder::GenerateQuad(const std::string &meshName, Color color, float 
 	v.normal.Set(0, 0, 1);
 
 	// Add the vertices here
-	v.pos.Set(0.5f * length, -0.5f * length, 0.f);	vertex_buffer_data.push_back(v); //v3
-	v.pos.Set(0.5f * length, 0.5f * length, 0.f);	vertex_buffer_data.push_back(v); //v0
-	v.pos.Set(-0.5f * length, 0.5f * length, 0.f);	vertex_buffer_data.push_back(v); //v1
-	v.pos.Set(-0.5f * length, -0.5f * length, 0.f);	vertex_buffer_data.push_back(v); //v2
+	v.pos.Set(0.5f * length, -0.5f * length, 0.f); v.textureCoordinates = {1,0}; vertex_buffer_data.push_back(v); //v3
+	v.pos.Set(0.5f * length, 0.5f * length, 0.f); v.textureCoordinates = {1,1};	vertex_buffer_data.push_back(v); //v0
+	v.pos.Set(-0.5f * length, 0.5f * length, 0.f); v.textureCoordinates = {0,1}; vertex_buffer_data.push_back(v); //v1
+	v.pos.Set(-0.5f * length, -0.5f * length, 0.f);	v.textureCoordinates = {0,0}; vertex_buffer_data.push_back(v); //v2
 
 	//tri1
 	index_buffer_data.push_back(0);

@@ -11,8 +11,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "Scene2.h"
 #include "ICA.hpp"
+#include "SceneTexture.h"
 
 #include "Input.hpp"
 
@@ -114,7 +114,7 @@ void Application::Init()
 void Application::Run()
 {
 	//Main Loop
-	Scene *scene = new ICA();
+	Scene *scene = new SceneTexture();
 	scene->Init();
 
 	m_timer.startTimer();    // Start timer to calculate how long it takes to render this frame

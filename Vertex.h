@@ -2,6 +2,7 @@
 #define VERTEX_H
 
 #include <vec3.hpp>
+#include <vec2.hpp>
 
 struct Position
 {
@@ -25,6 +26,7 @@ struct Vertex
 	Position pos;
 	Color color;
 	Normal normal;
+	glm::vec2 textureCoordinates;
 };
 
 #endif
