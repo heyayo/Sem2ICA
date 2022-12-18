@@ -1,27 +1,16 @@
 #include "GameObject.h"
 
-struct rBounded : public GameObject
+template<class BOUNDS>
+struct boundedObject : public GameObject
 {
-    radial bounds;
-    rBounded(Mesh* giveMesh, radial newBounds);
+    BOUNDS bounds;
+    boundedObject(Mesh* giveMesh, BOUNDS newBounds) : GameObject(giveMesh), bounds(newBounds) {}
 };
 
-struct timedRBounded : public rBounded
+template<class BOUNDS>
+struct timedBoundedObject : public boundedObject<BOUNDS>
 {
     float timeSinceAlive = 0;
     float lifetime;
-    timedRBounded(Mesh* giveMesh, radial newBounds, float live);
-};
-
-struct qBounded : public GameObject
-{
-	Quad bounds;
-	qBounded(Mesh* giveMesh, Quad newBounds);
-};
-
-struct timedQBounded : public qBounded
-{
-	float timeSinceAlive = 0;
-	float lifetime;
-	timedQBounded(Mesh* giveMesh, Quad newBounds, float live);
+    timedBoundedObject(Mesh* giveMesh, BOUNDS newBounds, float life) : boundedObject<BOUNDS>(giveMesh, newBounds), lifetime(life) {}
 };

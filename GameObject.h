@@ -14,6 +14,7 @@ struct GameObject
 	float mass;
     Vector3 force;
 	float multiplier;
+    float rotation = 0;
 
 	GameObject(Mesh* giveMesh);
 	~GameObject();

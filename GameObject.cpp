@@ -6,7 +6,8 @@ GameObject::GameObject(Mesh* giveMesh)
 	: mesh(giveMesh),
 	scale(1,1,1),
 	mass(1.f),
-	active(false)
+	active(false),
+	multiplier(1/mass)
 {}
 
 GameObject::~GameObject()
@@ -15,18 +16,15 @@ GameObject::~GameObject()
 
 float GameObject::DirectionTo(const Vector3& target)
 {
-	auto direction = target-pos;
-	float angle = (direction.x) / direction.Length();
-	angle = std::asin(angle);
-	angle = Math::RadianToDegree(angle);
+	Vector3 delta = target-pos;
+	float angle = atan2(delta.y,delta.x);
 	return angle;
 }
 
 void GameObject::ActOn(float strength, float direction)
 {
-	auto radianDirection = Math::DegreeToRadian(direction);
-    float x = sin(radianDirection)*strength;
-    float y = cos(radianDirection)*strength;
+    float x = sin(direction)*strength;
+    float y = cos(direction)*strength;
 
     force = {x,y,0};
 }

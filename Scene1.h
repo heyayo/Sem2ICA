@@ -20,7 +20,11 @@ public:
 		GEO_AXES,
 		GEO_TEXT,
 		GEO_BALL,
+		PLAYERHURT,
 		GEO_CUBE,
+		LINE,
+		REDLINE,
+		LASERLINE,
 		NUM_GEOMETRY,
 	};
 
@@ -36,6 +40,9 @@ public:
 		CORNERFAN,
 		DIRECT,
 		CENTER,
+		LIMITS,
+		LASER,
+		WAVE_MAX
 	};
 
 	Scene1();
@@ -61,13 +68,17 @@ private:
 
 	float m_worldWidth;
 	float m_worldHeight;
-	std::unique_ptr<rBounded> player;
+	std::unique_ptr<boundedObject<radial>> player;
 	int playerLives = 5;
-	std::vector<std::unique_ptr<timedRBounded>> projectiles;
-	std::vector<std::unique_ptr<timedQBounded>> quadProjectiles;
-	std::queue<WaveType> waves;
-	float waveTime;
+	std::vector<std::unique_ptr<timedBoundedObject<radial>>> projectiles;
+	std::vector<std::unique_ptr<timedBoundedObject<Quad>>> quadProjectiles;
+	std::vector<std::unique_ptr<timedBoundedObject<Line>>> lines;
+	std::vector<std::unique_ptr<timedBoundedObject<Line>>> damageLines;
+	std::queue<WaveType> waves;	
+	float waveTime = 0;
 	float waveFrequency = 5;
+	float playerHurtCheck = 0;
+	const float playerHurtTime = 0.8f;
 
 	Camera camera;
 
