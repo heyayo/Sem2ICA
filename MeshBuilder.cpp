@@ -4,6 +4,7 @@
 #include "gtc/constants.hpp"
 #include <vector>
 #include "glm.hpp"
+#include "LoadOBJ.h"
 
 /******************************************************************************/
 /*!
@@ -481,6 +482,32 @@ Mesh* MeshBuilder::GenerateHemisphere(const std::string& meshName, Color color, 
 
 	mesh->indexSize = index_buffer_data.size();
 	mesh->mode = Mesh::DRAW_TRIANGLE_STRIP;
+
+	return mesh;
+}
+
+Mesh* MeshBuilder::LoadMesh(const std::string& filepath, const std::string& name)
+{
+	Mesh* mesh = new Mesh(name);
+	mesh->mat = {{0.1f,0.1f,0.1},{0.5f,0.5f,0.5f},{0.2f,0.2f,0.2f},0.5f};
+	
+	std::vector<Position> vertices;
+	std::vector<glm::vec2> uv;
+	std::vector<glm::vec3> normals;
+
+	if (!LoadOBJ(filepath.c_str(),vertices,uv,normals))
+		return nullptr;
+
+	std::vector<Vertex> vertexdata;
+	std::vector<GLuint> indexdata;
+
+	IndexVBO(vertices,uv,normals,indexdata,vertexdata);
+	glBindBuffer(GL_ARRAY_BUFFER, mesh->vertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER,vertexdata.size()*sizeof(Vertex),vertexdata.data(),GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,mesh->indexBuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER,indexdata.size() * sizeof(GLuint),indexdata.data(),GL_STATIC_DRAW);
+	mesh->indexSize = indexdata.size();
+	mesh->mode = Mesh::DRAW_TRIANGLES;
 
 	return mesh;
 }
