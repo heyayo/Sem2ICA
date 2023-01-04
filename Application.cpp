@@ -113,7 +113,7 @@ void Application::Run()
 	//Main Loop
 	Scene *scene = new Scene1();
 	scene->Init();
-	srand(reinterpret_cast<unsigned>(scene));
+	//srand(reinterpret_cast<unsigned>(scene));
 
 	m_timer.startTimer();    // Start timer to calculate how long it takes to render this frame
 	while (!glfwWindowShouldClose(m_window) && !IsKeyPressed(GLFW_KEY_ESCAPE))
