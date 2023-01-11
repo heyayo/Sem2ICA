@@ -11,15 +11,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "ICA.hpp"
-#include "ModelScene.hpp"
+#include "GUI.hpp"
 
 #include "Input.hpp"
+#include "MouseController.h"
 
 GLFWwindow* m_window;
 const unsigned char FPS = 60; // FPS of this game
 const unsigned int frameTime = 1000 / FPS; // time for each frame
 
+static void mousebtn_callback(GLFWwindow* window, int button, int action, int mods)
+{
+	if (action == GLFW_PRESS)
+		MouseController::GetInstance()->UpdateMouseButtonPressed(button);
+	else
+		MouseController::GetInstance()->UpdateMouseButtonReleased(button);
+}
+
+//Define the mouse scroll callback
+static void mousescroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	MouseController::GetInstance()->UpdateMouseScroll(xoffset, yoffset);
+}
 //Define an error callback
 static void error_callback(int error, const char* description)
 {
@@ -80,7 +93,7 @@ void Application::Init()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //We don't want the old OpenGL
 
 	//Create a window and create its OpenGL context
-	m_window = glfwCreateWindow(1600, 1200, "OPENGLFRAMELINUX", NULL, NULL);
+	m_window = glfwCreateWindow(1280, 1024, "OPENGLFRAMELINUX", NULL, NULL);
 
 	//If the window couldn't be created
 	if (!m_window)
@@ -95,6 +108,13 @@ void Application::Init()
 
 	//Sets the key callback
 	glfwSetKeyCallback(m_window, key_callback);
+	glfwSetMouseButtonCallback(m_window,mousebtn_callback);
+	glfwSetScrollCallback(m_window,mousescroll_callback);
+
+	if (!enablePointer)
+		glfwSetInputMode(m_window,GLFW_CURSOR,GLFW_CURSOR_DISABLED);
+	else if (!showPointer)
+		glfwSetInputMode(m_window,GLFW_CURSOR,GLFW_CURSOR_HIDDEN);
 
 	//Sets the resize callback to handle window resizing
 	glfwSetWindowSizeCallback(m_window, resize_callback);
@@ -114,9 +134,11 @@ void Application::Init()
 void Application::Run()
 {
 	//Main Loop
-	Scene *scene = new ModelScene();
+	Scene *scene = new GUI();
 	scene->Init();
 
+	auto keyinst = Input::GetInstance();
+	auto mouseinst = MouseController::GetInstance();
 	m_timer.startTimer();    // Start timer to calculate how long it takes to render this frame
 	while (!glfwWindowShouldClose(m_window) && !IsKeyPressed(GLFW_KEY_ESCAPE))
 	{
@@ -125,7 +147,11 @@ void Application::Run()
 		//Swap buffers
 		glfwSwapBuffers(m_window);
 		
-		Input::GetInstance()->PostUpdate();
+		keyinst->PostUpdate();
+		mouseinst->PostUpdate();
+		double mouse_x,mouse_y;
+		glfwGetCursorPos(m_window,&mouse_x,&mouse_y);
+		mouseinst->UpdateMousePosition(mouse_x,mouse_y);
 
 		//Get and organize events, like keyboard and mouse input, window resizing, etc...
 		glfwPollEvents();

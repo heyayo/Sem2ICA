@@ -1,10 +1,12 @@
+#ifndef GUI_HPP
+#define GUI_HPP
 #include "FPSCam.hpp"
 #include "Light.hpp"
 #include "MatrixStack.hpp"
 #include "Mesh.h"
 #include "Scene.h"
 
-class ModelScene : public Scene
+class GUI : public Scene
 {
 
 public:
@@ -20,6 +22,7 @@ public:
 		GEO_BOTTOM,
 		GEO_FRONT,
 		GEO_BACK,
+		GEORALD,
 		NUM_GEOMETRY,
 	};
 
@@ -50,8 +53,8 @@ public:
 		U_TOTAL,
 	};
 
-	ModelScene();
-	~ModelScene();
+	GUI();
+	~GUI();
 
 	virtual void Init();
 	virtual void Update(double dt);
@@ -60,8 +63,10 @@ public:
 
 private:
 	void HandleKeyPress();
+	void HandleMouseInput();
 	void RenderMesh(Mesh* mesh, bool enableLight);
 	void RenderSkybox();
+	void RenderGUI(Mesh* mesh, float x, float y, float scalex, float scaley);
 
 	unsigned m_vertexArrayID;
 	Mesh* meshList[NUM_GEOMETRY];
@@ -79,3 +84,4 @@ private:
 	bool enableLight;
 };
 
+#endif

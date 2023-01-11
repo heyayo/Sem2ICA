@@ -1,4 +1,5 @@
-#include "ModelScene.hpp"
+
+#include "GUI.hpp"
 #include "GL/glew.h"
 
 // GLM Headers
@@ -10,25 +11,28 @@
 //Include GLFW
 #include <GLFW/glfw3.h>
 #include <stdexcept>
+#include <iostream>
 
+#include "ext/matrix_projection.hpp"
 #include "shader.hpp"
 #include "Application.h"
 #include "MeshBuilder.h"
 #include "Input.hpp"
 #include "LoadTGA.h"
+#include "MouseController.h"
 
 Mesh* object;
 Mesh* winebottle;
 
-ModelScene::ModelScene()
+GUI::GUI()
 {
 }
 
-ModelScene::~ModelScene()
+GUI::~GUI()
 {
 }
 
-void ModelScene::Init()
+void GUI::Init()
 {
 	// Set background color to dark blue
 	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
@@ -104,6 +108,8 @@ void ModelScene::Init()
 	meshList[GEO_FRONT]->textureID = LoadTGA("Image//front.tga");
 	meshList[GEO_BACK] = MeshBuilder::GenerateQuad("Plane", Color(1.f, 1.f, 1.f), 100.f);
 	meshList[GEO_BACK]->textureID = LoadTGA("Image//back.tga");
+	meshList[GEORALD] = MeshBuilder::GenerateQuad("JERALD",{1,1,1});
+	meshList[GEORALD]->textureID = LoadTGA("Image//jerald.tga");
 
 
 	//meshList[GEO_SPHERE_BLUE] = MeshBuilder::GenerateSphere("Earth", Color(0.4f, 0.2f, 0.8f), 1.f, 12, 12);
@@ -146,7 +152,7 @@ void ModelScene::Init()
 	winebottle->textureID = LoadTGA("obj/meshtwo.tga");
 }
 
-void ModelScene::RenderSkybox()
+void GUI::RenderSkybox()
 {
 	modelStack.PushMatrix();
 	modelStack.Translate(0,0,-50.f);
@@ -175,7 +181,7 @@ void ModelScene::RenderSkybox()
 	modelStack.PopMatrix();
 }
 
-void ModelScene::Update(double dt)
+void GUI::Update(double dt)
 {
 	HandleKeyPress();
 
@@ -196,7 +202,7 @@ void ModelScene::Update(double dt)
 
 }
 
-void ModelScene::Render()
+void GUI::Render()
 {
 	// Clear color buffer every frame
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -256,9 +262,10 @@ void ModelScene::Render()
 	RenderMesh(meshList[GEO_PLANE],false);
 	modelStack.PopMatrix();
 	*/
+	RenderGUI(meshList[GEORALD],400.f,300.f,512,512);
 }
 
-void ModelScene::RenderMesh(Mesh* mesh, bool enableLight)
+void GUI::RenderMesh(Mesh* mesh, bool enableLight)
 {
 	glm::mat4 MVP, modelView, modelView_inverse_transpose;
 
@@ -298,7 +305,7 @@ void ModelScene::RenderMesh(Mesh* mesh, bool enableLight)
 
 }
 
-void ModelScene::Exit()
+void GUI::Exit()
 {
 	// Cleanup VBO here
 	for (int i = 0; i < NUM_GEOMETRY; ++i)
@@ -312,7 +319,7 @@ void ModelScene::Exit()
 	glDeleteProgram(m_programID);
 }
 
-void ModelScene::HandleKeyPress()
+void GUI::HandleKeyPress()
 {
 	if (Input::GetInstance()->IsKeyPressed(0x31))
 	{
@@ -390,4 +397,49 @@ void ModelScene::HandleKeyPress()
 
 }
 
+void GUI::HandleMouseInput()
+{
+	static bool isLeftUp = false;
+	static bool isRightUp = false;
 
+	if (!isLeftUp && MouseController::GetInstance()->IsButtonDown(GLFW_MOUSE_BUTTON_LEFT))
+	{
+		isLeftUp = true;
+		std::cout << "LBUTTON DOWN" << std::endl;
+	}
+	else if (isLeftUp && MouseController::GetInstance()->IsButtonUp(GLFW_MOUSE_BUTTON_LEFT))
+	{
+		isLeftUp = false;
+		std::cout << "LBUTTON UP" << std::endl;
+	}
+	if (!isRightUp && MouseController::GetInstance()->IsButtonDown(GLFW_MOUSE_BUTTON_RIGHT))
+	{
+		isRightUp = true;
+		std::cout << "RBUTTON DOWN" << std::endl;
+	}
+	else if (isRightUp && MouseController::GetInstance()->IsButtonUp(GLFW_MOUSE_BUTTON_RIGHT))
+	{
+		isRightUp = false;
+		std::cout << "RBUTTON UP" << std::endl;
+	}
+}
+
+void GUI::RenderGUI(Mesh* mesh, float x, float y, float scalex, float scaley)
+{
+	glDisable(GL_DEPTH_TEST);
+	glm::mat4 ortho = glm::ortho(0.f,1280.f,0.f,1024.f,-1000.f,1000.f);
+	projectionStack.PushMatrix();
+	projectionStack.LoadMatrix(ortho);
+	viewStack.PushMatrix();
+	viewStack.LoadIdentity();
+	modelStack.PushMatrix();
+	modelStack.LoadIdentity();
+	modelStack.Translate(x,y,0);
+	modelStack.Rotate(180,0,0,1);
+	modelStack.Scale(scalex,scaley,1);
+	RenderMesh(mesh,false);
+	projectionStack.PopMatrix();
+	viewStack.PopMatrix();
+	modelStack.PopMatrix();
+	glEnable(GL_DEPTH_TEST);
+}

@@ -4,6 +4,10 @@
 
 class Camera
 {
+	protected:
+	void Refresh();
+	bool re;
+
 	public:
 	glm::vec3 position;
 	glm::vec3 target;

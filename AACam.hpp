@@ -7,6 +7,7 @@
 class AACam
 {
 	float phi,theta,distance;
+	protected:
 	bool recalc;
 	void refresh();
 
