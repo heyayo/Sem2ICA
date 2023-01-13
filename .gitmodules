@@ -1,0 +1,3 @@
+[submodule "sdmutils"]
+	path = sdmutils
+	url = https://github.com/heyayo/sdmutils
