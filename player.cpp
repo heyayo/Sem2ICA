@@ -1,8 +1,8 @@
 #include "player.hpp"
 
-Player::Player(const std::string &newname, float dist) : name(newname), distance(dist) {}
+Player::Player(const std::string &newname, int dist) : name(newname), distance(dist) {}
 Player::Player(const std::string &newname) : name(newname), distance(0) {}
-Player::Player(float dist) : name(""), distance(dist) {}
+Player::Player(int dist) : name(""), distance(dist) {}
 Player::~Player() {}
 
 bool Player::operator<(const Player& other)
@@ -29,4 +29,14 @@ const std::string &Player::getName()
 const int &Player::getDistance()
 {
     return distance;
+}
+
+void Player::setName(const std::string &newname)
+{
+    name = newname;
+}
+
+void Player::setDistance(const int &dist)
+{
+    distance = dist;
 }

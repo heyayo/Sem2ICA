@@ -1,27 +1,27 @@
-#include "minheap.hpp"
-#include "player.hpp"
+#include "PlayerTracker.hpp"
 
 int main()
 {
-    sdm::minheap<Player,50> tree;
+    {
+        PlayerTracker game;
 
-    tree.insert(new Player("Dave",10));
-    tree.insert(new Player("Triss",12));
-    tree.insert(new Player("Maldover",19));
-    Player* toRemove = new Player("Mippy",16);
-    tree.insert(toRemove);
-    tree.insert(new Player("Ned",9));
-    tree.insert(new Player("McLovin",3));
-    tree.insert(new Player("McLovin",52));
-    tree.insert(new Player("Michaels",52));
+        game.addPlayer("McLovin",3);
+        game.addPlayer("Michael",5);
+        game.addPlayer("Fass",4);
+        game.addPlayer("Bender",6);
+        game.addPlayer("Hugh",12);
+        game.addPlayer("Jack",13);
+        game.addPlayer("Man",8);
+        game.addPlayer("Bingo",7);
+        game.addPlayer("Bango",9);
+        game.addPlayer("Bish",15);
+        game.addPlayer("Bash",24);
+        game.addPlayer("Bosh",22);
 
-    std::cout << tree << std::endl;
-    tree.debugPrint();
-    tree.remove(toRemove);
-    tree.debugPrint();
-    std::cout << tree << std::endl;
-    tree.remove(Player("McLovin"),[](Player* a, Player* b)->bool{return a->getName() == b->getName();});
-    tree.debugPrint();
-    std::cout << tree << std::endl;
-    //system("PAUSE");
+        game.list();
+
+        game.move("McLovin",20);
+
+        game.list();
+    }
 }

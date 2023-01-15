@@ -10,13 +10,16 @@ class Player
     int distance;
 
 public:
-    Player(const std::string& newname, float dist);
+    Player(const std::string& newname, int dist);
     Player(const std::string& newname);
-    Player(float dist);
+    Player(int dist);
     ~Player();
 
     const std::string& getName();
     const int& getDistance();
+
+    void setName(const std::string& newname);
+    void setDistance(const int& dist);
 
     bool operator<(const Player& other);
     bool operator==(const Player& other);
