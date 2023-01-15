@@ -488,15 +488,15 @@ Mesh* MeshBuilder::GenerateHemisphere(const std::string& meshName, Color color, 
 
 Mesh* MeshBuilder::LoadMesh(const std::string& filepath, const std::string& name)
 {
-	Mesh* mesh = new Mesh(name);
-	mesh->mat = {{0.1f,0.1f,0.1},{0.5f,0.5f,0.5f},{0.2f,0.2f,0.2f},0.5f};
-	
 	std::vector<Position> vertices;
 	std::vector<glm::vec2> uv;
 	std::vector<glm::vec3> normals;
 
 	if (!LoadOBJ(filepath.c_str(),vertices,uv,normals))
 		return nullptr;
+
+	Mesh* mesh = new Mesh(name);
+	mesh->mat = {{0.1f,0.1f,0.1},{0.5f,0.5f,0.5f},{0.2f,0.2f,0.2f},0.5f};
 
 	std::vector<Vertex> vertexdata;
 	std::vector<GLuint> indexdata;
@@ -510,4 +510,32 @@ Mesh* MeshBuilder::LoadMesh(const std::string& filepath, const std::string& name
 	mesh->mode = Mesh::DRAW_TRIANGLES;
 
 	return mesh;
+}
+
+Mesh *MeshBuilder::LoadMeshMTL(const std::string &filepath, const std::string &mtlpath, const std::string &name)
+{
+    std::vector<Position> vertices;
+    std::vector<glm::vec2> uv;
+    std::vector<glm::vec3> normals;
+    std::vector<Material> materials;
+
+    if (!LoadOBJMTL(filepath.c_str(),mtlpath.c_str(),vertices,uv,normals,materials)) return nullptr;
+
+    Mesh* mesh = new Mesh(name);
+
+    std::vector<Vertex> vbuffer;
+    std::vector<GLuint> ibuffer;
+    IndexVBO(vertices,uv,normals,ibuffer,vbuffer);
+
+    for (auto& material : materials)
+        mesh->materials.push_back(material);
+
+    glBindBuffer(GL_ARRAY_BUFFER, mesh->vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER,vbuffer.size()*sizeof(Vertex),vbuffer.data(),GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,mesh->indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER,ibuffer.size() * sizeof(GLuint),ibuffer.data(),GL_STATIC_DRAW);
+    mesh->indexSize = ibuffer.size();
+    mesh->mode = Mesh::DRAW_TRIANGLES;
+
+    return mesh;
 }

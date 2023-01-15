@@ -22,13 +22,13 @@ void IndexVBO(
 	std::vector<Vertex> & out_vertices
 );
 
-/*bool LoadOBJMTL(
+bool LoadOBJMTL(
 	const char* file_path, 
 	const char* mtl_path,
 	std::vector<Position>& out_vertices,
 	std::vector<glm::vec2>& out_uvs,
 	std::vector<glm::vec3>& out_normals,
 	std::vector<Material>& out_materials
-);*/
+);
 
 #endif

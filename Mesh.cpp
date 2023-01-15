@@ -3,6 +3,19 @@
 #include "GL/glew.h"
 #include "Vertex.h"
 
+unsigned Mesh::locationKa;
+unsigned Mesh::locationKd;
+unsigned Mesh::locationKs;
+unsigned Mesh::locationNs;
+
+void Mesh::SetMaterialLoc(unsigned int kA, unsigned int kD, unsigned int kS, unsigned int nS)
+{
+    locationKa = kA;
+    locationKd = kD;
+    locationKs = kS;
+    locationNs = nS;
+}
+
 /******************************************************************************/
 /*!
 \brief
@@ -55,12 +68,34 @@ void Mesh::Render()
 	if (textureID > 0)
 		glVertexAttribPointer(3,2,GL_FLOAT,GL_FALSE,sizeof(Vertex), (void*)(sizeof(Position) + sizeof(Color) + sizeof(glm::vec3)));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-	if (mode == DRAW_TRIANGLE_STRIP)
-		glDrawElements(GL_TRIANGLE_STRIP, indexSize, GL_UNSIGNED_INT, 0);
-	else if (mode == DRAW_LINES)
-		glDrawElements(GL_LINES, indexSize, GL_UNSIGNED_INT, 0);
-	else
-		glDrawElements(GL_TRIANGLES, indexSize, GL_UNSIGNED_INT, 0);
+    if (materials.size() == 0)
+    {
+        if (mode == DRAW_TRIANGLE_STRIP)
+            glDrawElements(GL_TRIANGLE_STRIP, indexSize, GL_UNSIGNED_INT, 0);
+        else if (mode == DRAW_LINES)
+            glDrawElements(GL_LINES, indexSize, GL_UNSIGNED_INT, 0);
+        else
+            glDrawElements(GL_TRIANGLES, indexSize, GL_UNSIGNED_INT, 0);
+    }
+    else
+    {
+        for (unsigned i = 0, offset = 0; i < materials.size(); ++i)
+        {
+            Material& material = materials[i];
+            glUniform3fv(locationKa, 1, &material.ambient.r);
+            glUniform3fv(locationKd, 1, &material.diffuse.r);
+            glUniform3fv(locationKs, 1, &material.specular.r);
+            glUniform1f(locationNs, material.shininess);
+            if (mode == DRAW_TRIANGLE_STRIP)
+                glDrawElements(GL_TRIANGLE_STRIP, material.size, GL_UNSIGNED_INT, (void*)(offset * sizeof(unsigned)));
+            else if (mode == DRAW_LINES)
+                glDrawElements(GL_LINES, material.size, GL_UNSIGNED_INT, (void*)(offset * sizeof(unsigned)));
+            else
+                glDrawElements(GL_TRIANGLES, material.size, GL_UNSIGNED_INT, (void*)(offset * sizeof(unsigned)));
+            offset += material.size;
+        }
+
+    }
 
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);

@@ -15,10 +15,10 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR})
 
 file(GLOB COMMON Common/*)
-set(SOURCE Application.cpp main.cpp SceneTexture.cpp LoadTGA.cpp Mesh.cpp "Input.cpp" Scene1.cpp Scene2.cpp newCamera.cpp AACam.cpp shader.cpp MeshBuilder.cpp MatrixStack.cpp ICA.cpp LoadOBJ.cpp FPSCam.cpp MouseController.cpp GUI.cpp)
+set(SOURCE Application.cpp main.cpp SceneTexture.cpp LoadTGA.cpp Mesh.cpp "Input.cpp" Scene1.cpp Scene2.cpp newCamera.cpp AACam.cpp shader.cpp MeshBuilder.cpp MatrixStack.cpp ICA.cpp LoadOBJ.cpp FPSCam.cpp MouseController.cpp Object.cpp Object.hpp ThirdPersonCamera.cpp ThirdPersonCamera.hpp)
 
 add_library(CommonLib ${COMMON})
-add_executable(GL3D ${SOURCE})
+add_executable(GL3D ${SOURCE} Icaa.cpp Icaa.hpp)
 
 target_include_directories(GL3D PUBLIC ${CMAKE_SOURCE_DIR}/Common)
 target_include_directories(GL3D PUBLIC ${CMAKE_SOURCE_DIR}/include/)

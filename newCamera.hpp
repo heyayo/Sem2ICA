@@ -1,3 +1,5 @@
+#ifndef CAMERA_HPP
+#define CAMERA_HPP
 #include "glm.hpp"
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
@@ -21,3 +23,4 @@ class Camera
 	void Update(double dt);
 };
 
+#endif

@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "GUI.hpp"
+#include "Icaa.hpp"
 
 #include "Input.hpp"
 #include "MouseController.h"
@@ -134,7 +134,7 @@ void Application::Init()
 void Application::Run()
 {
 	//Main Loop
-	Scene *scene = new GUI();
+	Scene *scene = new ICAA();
 	scene->Init();
 
 	auto keyinst = Input::GetInstance();
@@ -155,7 +155,7 @@ void Application::Run()
 
 		//Get and organize events, like keyboard and mouse input, window resizing, etc...
 		glfwPollEvents();
-        m_timer.waitUntil(frameTime);       // Frame rate limiter. Limits each frame to a specified time in ms.   
+        m_timer.waitUntil(frameTime);       // Frame rate limiter. Limits each frame to a specified time in ms.
 
 	} //Check if the ESC key had been pressed or if the window had been closed
 	scene->Exit();

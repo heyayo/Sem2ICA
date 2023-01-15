@@ -20,12 +20,12 @@ void Camera::Update(double dt) {}
 
 void Camera::Refresh()
 {
-	if (re) return;
+	if (!re) return;
 
 	glm::vec3 view = glm::normalize(target-position);
-	glm::vec3 right = glm::normalize(glm::cross(view,up));
+	glm::vec3 right = glm::normalize(glm::cross(up,view));
 
-	up = glm::normalize(glm::cross(right,view));
+	up = glm::normalize(glm::cross(view,right));
 	re = false;
 }
 

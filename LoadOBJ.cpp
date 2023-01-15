@@ -193,7 +193,7 @@ void IndexVBO(
 	}
 }
 
-/*bool LoadMTL(const char* file_path, std::map<std::string, Material*>& materials_map)
+bool LoadMTL(const char* file_path, std::map<std::string, Material*>& materials_map)
 {
 	std::ifstream fileStream(file_path, std::ios::binary);
 	if (!fileStream.is_open())
@@ -220,25 +220,25 @@ void IndexVBO(
 		else if (strncmp("Ka ", buf, 3) == 0) { //process Ka
 			if (mtl != nullptr)
 			{
-				sscanf_s((buf + 2), "%f%f%f", &mtl->kAmbient.r, &mtl->kAmbient.g, &mtl->kAmbient.b);
+				sscanf((buf + 2), "%f%f%f", &mtl->ambient.r, &mtl->ambient.g, &mtl->ambient.b);
 			}
 		}
 		else if (strncmp("Kd ", buf, 3) == 0) { //process Kd
 			if (mtl != nullptr)
 			{
-				sscanf_s((buf + 2), "%f%f%f", &mtl->kDiffuse.r, &mtl->kDiffuse.g, &mtl->kDiffuse.b);
+				sscanf((buf + 2), "%f%f%f", &mtl->diffuse.r, &mtl->diffuse.g, &mtl->diffuse.b);
 			}
 		}
 		else if (strncmp("Ks ", buf, 3) == 0) { //process Ks
 			if (mtl != nullptr)
 			{
-				sscanf_s((buf + 2), "%f%f%f", &mtl->kSpecular.r, &mtl->kSpecular.g, &mtl->kSpecular.b);
+				sscanf((buf + 2), "%f%f%f", &mtl->specular.r, &mtl->specular.g, &mtl->specular.b);
 			}
 		}
 		else if (strncmp("Ns ", buf, 3) == 0) { //process Ns
 			if (mtl != nullptr)
 			{
-				sscanf_s((buf + 2), "%f", &mtl->kShininess);
+				sscanf((buf + 2), "%f", &mtl->shininess);
 			}
 		}
 	}
@@ -247,7 +247,11 @@ void IndexVBO(
 	return true;
 }
 
-bool LoadOBJMTL(const char* file_path, const char* mtl_path, std::vector<Position>& out_vertices, std::vector<glm::vec2>& out_uvs, std::vector<glm::vec3>& out_normals, std::vector<Material>& out_materials)
+bool LoadOBJMTL(const char* file_path, const char* mtl_path,
+                std::vector<Position>& out_vertices,
+                std::vector<glm::vec2>& out_uvs,
+                std::vector<glm::vec3>& out_normals,
+                std::vector<Material>& out_materials)
 {
 	std::ifstream fileStream(file_path, std::ios::binary);
 	if (!fileStream.is_open())
@@ -269,14 +273,23 @@ bool LoadOBJMTL(const char* file_path, const char* mtl_path, std::vector<Positio
 		if (strncmp("v ", buf, 2) == 0) { 
 			// process vertex position
 			// refer to lecture on how to do it
+            Position vertex;
+            sscanf((buf+2),"%f%f%f",&vertex.x,&vertex.y,&vertex.z);
+            temp_vertices.push_back(vertex);
 		}
 		else if (strncmp("vt ", buf, 3) == 0) { 
 			// process texcoord
 			// refer to lecture on how to do it
+            glm::vec2 uv;
+            sscanf((buf+2),"%f%f",&uv.x,&uv.y);
+            temp_uvs.push_back(uv);
 		}
 		else if (strncmp("vn ", buf, 3) == 0) { 
 			// process normal
 			// refer to lecture on how to do it
+            glm::vec3 normal;
+            sscanf((buf+2),"%f%f%f",&normal.x,&normal.y,&normal.z);
+            temp_normals.push_back(normal);
 		}
 		//else if (strncmp("mtllib ", buf, 7) == 0) { //process mtllib
 		//	char mtl_path[256];
@@ -294,33 +307,61 @@ bool LoadOBJMTL(const char* file_path, const char* mtl_path, std::vector<Positio
 				out_materials.push_back(material);
 			}
 		}
-		else if (strncmp("f ", buf, 2) == 0) { 
+		else if (strncmp("f ", buf, 2) == 0) {
 			// process face
 			// refer to lecture on how to do it
 			unsigned int vertexIndex[4], uvIndex[4], normalIndex[4];
-			int matches = sscanf_s((buf + 2), "%d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d\n",
+			int matches = sscanf((buf + 2), "%d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d\n",
 				&vertexIndex[0], &uvIndex[0], &normalIndex[0],
 				&vertexIndex[1], &uvIndex[1], &normalIndex[1],
 				&vertexIndex[2], &uvIndex[2], &normalIndex[2],
 				&vertexIndex[3], &uvIndex[3], &normalIndex[3]);
 
-			if (matches == 9) //triangle (hint: index 0,1,2)
-			{
+            if (matches == 9) //triangle (hint: index 0,1,2)
+            {
 				if (out_materials.size() > 0)
 				{
-					out_materials.back().size += 3;
-				}
-			}
-			else if (matches == 12) //quad (hint: index 0,1,2 & 0,2,3)
-			{
+                    out_materials.back().size += 3;
+                }
+                vertexIndices.push_back(vertexIndex[0]);
+                vertexIndices.push_back(vertexIndex[1]);
+                vertexIndices.push_back(vertexIndex[2]);
+                uvIndices.push_back(uvIndex[0]);
+                uvIndices.push_back(uvIndex[1]);
+                uvIndices.push_back(uvIndex[2]);
+                normalIndices.push_back(normalIndex[0]);
+                normalIndices.push_back(normalIndex[1]);
+                normalIndices.push_back(normalIndex[2]);
+            }
+            else if (matches == 12) //quad (hint: index 0,1,2 & 0,2,3)
+            {
 				if (out_materials.size() > 0)
 				{
 					out_materials.back().size += 6;
 				}
-			}
-			else
-			{
-			}
+                vertexIndices.push_back(vertexIndex[0]);
+                vertexIndices.push_back(vertexIndex[1]);
+                vertexIndices.push_back(vertexIndex[2]);
+                vertexIndices.push_back(vertexIndex[0]);
+                vertexIndices.push_back(vertexIndex[2]);
+                vertexIndices.push_back(vertexIndex[3]);
+                uvIndices.push_back(uvIndex[0]);
+                uvIndices.push_back(uvIndex[1]);
+                uvIndices.push_back(uvIndex[2]);
+                uvIndices.push_back(uvIndex[0]);
+                uvIndices.push_back(uvIndex[2]);
+                uvIndices.push_back(uvIndex[3]);
+                normalIndices.push_back(normalIndex[0]);
+                normalIndices.push_back(normalIndex[1]);
+                normalIndices.push_back(normalIndex[2]);
+                normalIndices.push_back(normalIndex[0]);
+                normalIndices.push_back(normalIndex[2]);
+                normalIndices.push_back(normalIndex[3]);
+            }
+            else
+            {
+
+            }
 		}
 	}
 	fileStream.close(); // close file
@@ -351,4 +392,4 @@ bool LoadOBJMTL(const char* file_path, const char* mtl_path, std::vector<Positio
 	materials_map.clear();
 
 	return true;
-}*/
+}
