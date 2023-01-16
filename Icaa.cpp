@@ -1,5 +1,5 @@
 
-#include "ICAA.hpp"
+#include "Icaa.hpp"
 #include "GL/glew.h"
 
 // GLM Headers
@@ -88,7 +88,7 @@ void ICAA::Init()
 
     // Initialise camera properties
     camera.init({0.f,0.f,0.f},{1.f,0.f,0.f});
-    cameratwo.Init({0,0,0},{0,0,0},{0.f,1.f,0.f});
+	cameratwo.init(&camtarget,1.f);
 
     // Init VBO here
     for (int i = 0; i < NUM_GEOMETRY; ++i)
@@ -204,7 +204,8 @@ void ICAA::Update(double dt)
     if (Input::GetInstance()->IsKeyDown('P'))
         light[0].position.y += static_cast<float>(dt) * 5.f;
 
-    cameratwo.update(dt);
+    //camera.update(dt);
+	cameratwo.update(dt);
 
 }
 
@@ -215,11 +216,13 @@ void ICAA::Render()
 
     // Load view matrix stack and set it with camera position, target position and up direction
     viewStack.LoadIdentity();
+	/*
     viewStack.LookAt(
-            cameratwo.position.x, cameratwo.position.y, cameratwo.position.z,
-            cameratwo.target.x, cameratwo.target.y, cameratwo.target.z,
-            cameratwo.up.x, cameratwo.up.y, cameratwo.up.z
-    );
+            camera.position.x, camera.position.y, camera.position.z,
+            camera.target.x, camera.target.y, camera.target.z,
+            camera.up.x, camera.up.y, camera.up.z
+    );*/
+	viewStack.LookAt(cameratwo.position,*cameratwo.looktarget,{0.f,1.f,0.f});
 
     // Load identity matrix into the model stack
     modelStack.LoadIdentity();

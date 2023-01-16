@@ -84,6 +84,7 @@ private:
 
     FPSCam camera;
     ThirdPersonCamera cameratwo;
+	glm::vec3 camtarget{};
     int projType = 1; // fix to 0 for orthographic, 1 for projection
 
     MatrixStack modelStack, viewStack, projectionStack;

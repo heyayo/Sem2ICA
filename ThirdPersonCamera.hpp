@@ -6,8 +6,10 @@
 class ThirdPersonCamera : public Camera
 {
 public:
+	float distance;
+	glm::vec3* looktarget;
+	void init(glm::vec3* target, float dist);
     void update(double deltaTime);
-    float zoomLevel = 1.f;
 
 };
 

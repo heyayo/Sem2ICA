@@ -26,6 +26,7 @@ class MatrixStack
 	void LookAt(double eyeX, double eyeY, double eyeZ,
 	double centerX, double centerY, double centerZ,
 	double upX, double upY, double upZ);
+	void LookAt(const glm::vec3& position, const glm::vec3& target, const glm::vec3& up);
 
 private:
 	std::stack<glm::mat4> ms;

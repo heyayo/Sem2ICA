@@ -65,4 +65,9 @@ void MatrixStack::LookAt(double eyeX, double eyeY, double eyeZ, double centerX, 
 	);
 	ms.top() = ms.top() * mat;
 }
+void MatrixStack::LookAt(const glm::vec3& position, const glm::vec3& target, const glm::vec3& up)
+{
+	glm::mat4 mat = glm::lookAt(position,target,up);
+	ms.top() = ms.top() * mat;
+}
 
