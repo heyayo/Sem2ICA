@@ -42,7 +42,7 @@ void Scene2::Init()
 	// Get a handle for our "MVP" uniform
 	m_parameters[U_MVP] = glGetUniformLocation(m_programID, "MVP");
 
-	// Init VBO here
+	// init VBO here
 	for (int i = 0; i < NUM_GEOMETRY; ++i)
 	{
 		meshList[i] = nullptr;

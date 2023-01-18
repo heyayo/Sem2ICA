@@ -11,9 +11,9 @@ public:
 	FPSCam();
 	~FPSCam();
 
-	void init(const glm::vec3& pos, const glm::vec3& target, const glm::vec3& up = {0.f,1.f,0.f});
-	void reset();
-	void update(double deltaTime);
+	void init(const glm::vec3& pos, const glm::vec3& target, const glm::vec3& up = {0.f,1.f,0.f}) override;
+	void reset() override;
+	void update(double deltaTime) override;
 };
 
 #endif

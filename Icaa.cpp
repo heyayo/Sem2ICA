@@ -31,6 +31,12 @@ ICAA::ICAA()
 
 ICAA::~ICAA()
 {
+    for (auto& x : objects)
+    {
+        delete x;
+        x = nullptr;
+    }
+    objects.clear();
 }
 
 void ICAA::Init()
@@ -93,9 +99,10 @@ void ICAA::Init()
 
     // Initialise camera properties
     camera.init({0.f,0.f,0.f},{1.f,0.f,0.f});
-	//cameratwo.init(&camtarget,1.f);
+	cameratwo.init(&camtarget,1.f);
+    currentCamera = &camera;
 
-    // Init VBO here
+    // init VBO here
     for (int i = 0; i < NUM_GEOMETRY; ++i)
     {
         meshList[i] = nullptr;
@@ -104,8 +111,7 @@ void ICAA::Init()
     meshList[GEO_AXES] = MeshBuilder::GenerateAxes("Axes", 10000.f, 10000.f, 10000.f);
     meshList[GEO_SPHERE] = MeshBuilder::GenerateSphere("Sun", Color(1.f, 1.f, 1.f), 1.f, 16, 16);
     meshList[GEO_CUBE] = MeshBuilder::GenerateCube("Arm", Color(0.5f, 0.5f, 0.5f), 1.f);
-    meshList[GEO_PLANE] = MeshBuilder::GenerateQuad("Plane", Color(1.f, 1.f, 1.f), 10.f);
-    meshList[GEO_PLANE]->textureID = LoadTGA("Image//NYP.tga");
+    meshList[GEO_PLANE] = MeshBuilder::GenerateQuad("Plane", Color(1.f, 1.f, 1.f), 1000.f);
     meshList[GEO_LEFT] = MeshBuilder::GenerateQuad("Plane", Color(1.f, 1.f, 1.f), 100.f);
     meshList[GEO_LEFT]->textureID = LoadTGA("Image//left.tga");
     meshList[GEO_RIGHT] = MeshBuilder::GenerateQuad("Plane", Color(1.f, 1.f, 1.f), 100.f);
@@ -163,6 +169,11 @@ void ICAA::Init()
     object->textureID = LoadTGA("obj/meshone.tga");
     winebottle = MeshBuilder::LoadMesh("obj/meshtwo.obj");
     winebottle->textureID = LoadTGA("obj/meshtwo.tga");
+
+    Object* plane = new Object(meshList[GEO_PLANE]);
+    plane->rotation.x = -90;
+    objects.push_back(plane);
+    objects.push_back(new Object(meshList[GEO_SPHERE]));
 }
 
 void ICAA::RenderSkybox()
@@ -214,7 +225,7 @@ void ICAA::Update(double dt)
     if (Input::GetInstance()->IsKeyDown('P'))
         light[0].position.y += static_cast<float>(dt) * 5.f;
 
-    camera.update(dt);
+    currentCamera->update(dt);
 	//cameratwo.update(dt);
 
 }
@@ -233,7 +244,7 @@ void ICAA::Render()
             camera.up.x, camera.up.y, camera.up.z
     );*/
 	//viewStack.LookAt(cameratwo.position,*cameratwo.looktarget,{0.f,1.f,0.f});
-	viewStack.LookAt(camera.position,camera.target,camera.up);
+	viewStack.LookAt(currentCamera->position,currentCamera->target,currentCamera->up);
 
     // Load identity matrix into the model stack
     modelStack.LoadIdentity();
@@ -277,9 +288,22 @@ void ICAA::Render()
 
 	modelStack.PushMatrix();
 	modelStack.LoadIdentity();
-	RenderTextOnScreen(meshList[TEXT], "BREENSEERAYYANG", {1,1,1}, 64, 0, 0);
+	RenderTextOnScreen(meshList[TEXT], "peple", {1,1,1}, 64, 0, 0);
 	RenderTextOnScreen(meshList[TEXT], "FPS: " + std::to_string(fps),{1,1,1},64,0,1024-64);
 	modelStack.PopMatrix();
+
+    for (const auto& x : objects)
+    {
+        modelStack.PushMatrix();
+        modelStack.LoadIdentity();
+        modelStack.Translate(x->position);
+        modelStack.Rotate(x->rotation.x,{1.f,0.f,0.f});
+        modelStack.Rotate(x->rotation.y,{0.f,1.f,0.f});
+        modelStack.Rotate(x->rotation.z,{0.f,0.f,1.f});
+        modelStack.Scale(x->scaler);
+        RenderMesh(x->mesh,true);
+        modelStack.PopMatrix();
+    }
 }
 
 void ICAA::RenderMesh(Mesh* mesh, bool enableLight)
@@ -409,6 +433,10 @@ void ICAA::HandleKeyPress()
 
         glUniform1i(m_parameters[U_LIGHT0_TYPE], light[0].type);
     }
+    if (Input::GetInstance()->IsKeyPressed(GLFW_KEY_M))
+        currentCamera = &camera;
+    if (Input::GetInstance()->IsKeyPressed(GLFW_KEY_L))
+        currentCamera = &cameratwo;
 }
 
 void ICAA::HandleMouseInput()
@@ -496,7 +524,7 @@ void ICAA::RenderTextOnScreen(Mesh* mesh, const std::string& text, Color color, 
 	viewStack.PushMatrix();
 	viewStack.LoadIdentity(); //No need camera for ortho mode
 	modelStack.PushMatrix();
-	modelStack.LoadIdentity(); //Reset modelStack
+	modelStack.LoadIdentity(); //reset modelStack
 	modelStack.Translate(x, y, 0);
 	modelStack.Scale(size, size, size);
 	glUniform1i(m_parameters[U_TEXT_ENABLED], 1);

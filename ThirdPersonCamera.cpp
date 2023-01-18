@@ -6,7 +6,7 @@ void ThirdPersonCamera::init(glm::vec3 *target, float dist)
 {
 	looktarget = target;
 	distance = dist;
-	Camera::Init({1,0,0},{0,0,0},{0,1,0});
+    Camera::init({1, 0, 0}, {0, 0, 0}, {0, 1, 0});
 }
 
 void ThirdPersonCamera::update(double deltaTime)

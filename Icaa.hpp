@@ -8,6 +8,7 @@
 #include "Light.hpp"
 #include "Object.hpp"
 #include "ThirdPersonCamera.hpp"
+#include <memory>
 
 class ICAA : public Scene
 {
@@ -89,6 +90,7 @@ private:
 
 	float fps = 0;
 
+    Camera* currentCamera = nullptr;
     FPSCam camera;
     ThirdPersonCamera cameratwo;
 	glm::vec3 camtarget{};
@@ -99,6 +101,8 @@ private:
     static const int NUM_LIGHTS = 1;
     Light light[NUM_LIGHTS];
     bool enableLight;
+
+    std::vector<Object*> objects;
 };
 
 #endif

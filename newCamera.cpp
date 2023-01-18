@@ -7,16 +7,16 @@ Camera::Camera()
 
 Camera::~Camera() {}
 
-void Camera::Init(const glm::vec3& pos, const glm::vec3& target, const glm::vec3& up)
+void Camera::init(const glm::vec3& pos, const glm::vec3& target, const glm::vec3& up)
 {
 	this->position = pos;
 	this->target = target;
 	this->up = up;
 }
 
-void Camera::Reset() {}
+void Camera::reset() {}
 
-void Camera::Update(double dt) {}
+void Camera::update(double dt) {}
 
 void Camera::Refresh()
 {

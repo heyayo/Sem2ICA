@@ -17,11 +17,11 @@ Scene1::~Scene1()
 
 void Scene1::Init()
 {
-	camera.Init(
-		{4.f,3.f,3.f},
-		{0.f,0.f,0.f},
-		{0.f,1.f,0.f}
-	);
+    camera.init(
+            {4.f, 3.f, 3.f},
+            {0.f, 0.f, 0.f},
+            {0.f, 1.f, 0.f}
+    );
 	// Set background color to dark blue
 	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
 
@@ -46,7 +46,7 @@ void Scene1::Init()
 	// Get a handle for our "MVP" uniform
 	m_parameters[U_MVP] = glGetUniformLocation(m_programID, "MVP");
 
-	// Init VBO here
+	// init VBO here
 	for (int i = 0; i < NUM_GEOMETRY; ++i)
 	{
 		meshList[i] = nullptr;

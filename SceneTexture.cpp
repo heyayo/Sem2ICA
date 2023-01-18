@@ -77,7 +77,7 @@ void SceneTexture::Init()
 	// Initialise camera properties
 	camera.init(45.f, 45.f, 10.f);
 
-	// Init VBO here
+	// init VBO here
 	for (int i = 0; i < NUM_GEOMETRY; ++i)
 	{
 		meshList[i] = nullptr;

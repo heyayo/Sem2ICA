@@ -29,6 +29,12 @@ Mesh::Mesh(const std::string &meshName)
 	, mode(DRAW_TRIANGLES)
 	, textureID(0)
 {
+    Material m;
+    m.ambient = {0.1f,0.1f,0.1f};
+    m.diffuse = {0.5f,0.5f,0.5f};
+    m.specular = {0.5f,0.5f,0.5f};
+    m.shininess = 1.f;
+    mat = m;
 	glGenBuffers(1, &vertexBuffer);
 	glGenBuffers(1, &indexBuffer);
 }

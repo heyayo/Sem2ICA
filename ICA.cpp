@@ -89,7 +89,7 @@ glUniform1f(m_parameters[U_LIGHT0_COSCUTOFF], cosf(glm::radians<float>(light[0].
 	glm::mat4 projection = glm::perspective(45.0f,4.f/3.f,0.1f,1000.f);
 	projectionStack.LoadMatrix(projection);
 
-	// Init VBO here
+	// init VBO here
 	for (int i = 0; i < NUM_GEOMETRY; ++i)
 	{
 		meshList[i] = nullptr;

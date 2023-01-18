@@ -18,9 +18,9 @@ class Camera
 	Camera();
 	~Camera();
 	
-	void Init(const glm::vec3& pos, const glm::vec3& target, const glm::vec3& up);
-	void Reset();
-	void Update(double dt);
+	virtual void init(const glm::vec3& pos, const glm::vec3& target, const glm::vec3& up);
+	virtual void reset();
+	virtual void update(double dt);
 };
 
 #endif

@@ -91,6 +91,6 @@ void FPSCam::update(double deltaTime)
 
 void FPSCam::init(const glm::vec3& pos, const glm::vec3& target, const glm::vec3& up)
 {
-	Camera::Init(pos,target,up);
+    Camera::init(pos, target, up);
 }
 

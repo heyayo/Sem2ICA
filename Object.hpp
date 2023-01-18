@@ -4,13 +4,12 @@
 #include "Mesh.h"
 #include "glm/vec3.hpp"
 
-class Object
+struct Object
 {
     Mesh* mesh;
-    glm::vec3 position{}, rotation{}, scaler{1,1,1};
+    glm::vec3 position{}, rotation{}, scaler{1.f,1.f,1.f};
     Object* parent = nullptr;
 
-public:
     Object(Mesh* newmesh);
     Object(Mesh* newmesh, Object* p);
     ~Object();

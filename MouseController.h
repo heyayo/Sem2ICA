@@ -26,7 +26,7 @@ public:
 		NUM_SCROLL_TYPE
 	};
 
-	// Update this class istance
+	// update this class istance
 	void UpdateMousePosition(const double _x, const double _y);
 	void UpdateMouseButtonPressed(const int _slot);
 	void UpdateMouseButtonReleased(const int _slot);

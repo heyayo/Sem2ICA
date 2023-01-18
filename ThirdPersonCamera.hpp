@@ -9,7 +9,7 @@ public:
 	float distance;
 	glm::vec3* looktarget;
 	void init(glm::vec3* target, float dist);
-    void update(double deltaTime);
+    void update(double deltaTime) override;
 
 };
 

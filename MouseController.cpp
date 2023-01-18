@@ -42,9 +42,9 @@ void MouseController::DestroyInstance()
 	}
 }
 
-/// Update this class istance
+/// update this class istance
 /**
- @brief Update the mouse position
+ @brief update the mouse position
  @param _x A const double variable containing the new mouse position in the x-axis
  @param _y A const double variable containing the new mouse position in the y-axis
  */
@@ -61,17 +61,17 @@ void MouseController::UpdateMousePosition(const double _x, const double _y)
 	prev_posX = curr_posX;
 	prev_posY = curr_posY;
 
-	// Update the current positions
+	// update the current positions
 	curr_posX = _x;
 	curr_posY = _y;
 
-	// Update the position delta
+	// update the position delta
 	delta_posX = curr_posX - prev_posX;
 	delta_posY = prev_posY - curr_posY;
 }
 
 /**
- @brief Update a mouse button when it is pressed down
+ @brief update a mouse button when it is pressed down
  @param _slot A const int variable which stores the button ID
  */
 void MouseController::UpdateMouseButtonPressed(const int _slot)
@@ -80,7 +80,7 @@ void MouseController::UpdateMouseButtonPressed(const int _slot)
 }
 
 /**
- @brief Update a mouse button when it is released
+ @brief update a mouse button when it is released
  @param _slot A const int variable which stores the button ID
  */
 void MouseController::UpdateMouseButtonReleased(const int _slot)
@@ -89,7 +89,7 @@ void MouseController::UpdateMouseButtonReleased(const int _slot)
 }
 
 /**
- @brief Update the mouse scroll status
+ @brief update the mouse scroll status
  @param WheelOffset_X A const double variable which stores the amount of offset in the x-axis
  @param WheelOffset_Y A const double variable which stores the amount of offset in the y-axis
  */
@@ -112,13 +112,13 @@ void MouseController::UpdateMouseScroll(const double WheelOffset_X, const double
 */
 void MouseController::PostUpdate(void)
 {
-	// Update the position delta
+	// update the position delta
 	delta_posX = 0.0;
 	delta_posY = 0.0;
 
 	prevBtnStatus = currBtnStatus;
 
-	// Update Wheel Scroll Status
+	// update Wheel Scroll Status
 	WheelOffset_X = 0.0;
 	WheelOffset_Y = 0.0;
 }
