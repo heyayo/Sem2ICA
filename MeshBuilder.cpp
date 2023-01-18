@@ -539,3 +539,58 @@ Mesh *MeshBuilder::LoadMeshMTL(const std::string &filepath, const std::string &m
 
     return mesh;
 }
+
+Mesh* MeshBuilder::GenerateText(const std::string &meshName, unsigned int rows, unsigned int cols)
+{
+	Vertex v;
+	std::vector<Vertex> vertexdata;
+	std::vector<unsigned> indexdata;
+
+	float width = 1.f/cols;
+	float height = 1.f/rows;
+	unsigned offset = 0;
+	for (unsigned row = 0; row < rows; ++row)
+	{
+		for (unsigned col = 0; col < cols; ++col)
+		{
+			v.pos.Set(0.5f,0.5f,0.f);
+			v.normal.Set(0,0,1);
+			v.textureCoordinates = {width * (col+1), height * (rows-row)};
+			vertexdata.push_back(v);
+
+			v.pos.Set(-0.5f,0.5f,0.f);
+			v.normal.Set(0,0,1);
+			v.textureCoordinates = {width * (col+0),height * (rows-row)};
+			vertexdata.push_back(v);
+
+			v.pos.Set(-0.5f, -0.5f, 0.f); 
+			v.normal.Set(0, 0, 1); 
+			v.textureCoordinates = glm::vec2(width * (col + 0), height * (rows - 1 - row)); 
+			vertexdata.push_back(v);
+
+			v.pos.Set(0.5f, -0.5f, 0.f); 
+			v.normal.Set(0, 0, 1); 
+			v.textureCoordinates = glm::vec2(width * (col + 1), height * (rows - 1 - row)); 
+			vertexdata.push_back(v);
+
+			indexdata.push_back(0 + offset);
+			indexdata.push_back(1 + offset);
+			indexdata.push_back(2 + offset);
+			indexdata.push_back(0 + offset);
+			indexdata.push_back(2 + offset);
+			indexdata.push_back(3 + offset);
+
+			offset += 4;
+		}
+	}
+
+	Mesh* mesh = new Mesh(meshName);
+	glBindBuffer(GL_ARRAY_BUFFER, mesh->vertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER,vertexdata.size() * sizeof(Vertex), vertexdata.data(),GL_STATIC_DRAW);	
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indexBuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER,indexdata.size() * sizeof(unsigned), indexdata.data(),GL_STATIC_DRAW);	
+	mesh->mode = Mesh::DRAW_TRIANGLES;
+	mesh->indexSize = indexdata.size();
+
+	return mesh;
+}

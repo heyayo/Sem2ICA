@@ -24,6 +24,7 @@ public:
 	static Mesh* GenerateHemisphere(const std::string& meshName, Color color, float radius = 1.f, int sliceres = 64, int stackres = 64);
 	static Mesh* LoadMesh(const std::string& filepath, const std::string& name = "LOADEDMESH");
     static Mesh* LoadMeshMTL(const std::string& filepath, const std::string& mtlpath, const std::string& name = "MLTMESH");
+	static Mesh* GenerateText(const std::string& meshName, unsigned rows, unsigned cols);
 };
 
 #endif

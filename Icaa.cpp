@@ -12,6 +12,7 @@
 #include <GLFW/glfw3.h>
 #include <stdexcept>
 #include <iostream>
+#include <string>
 
 #include "ext/matrix_projection.hpp"
 #include "shader.hpp"
@@ -39,6 +40,8 @@ void ICAA::Init()
 
     //Enable depth buffer and depth testing
     glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
     //Enable back face culling
     glEnable(GL_CULL_FACE);
@@ -54,7 +57,7 @@ void ICAA::Init()
     glBindVertexArray(m_vertexArrayID);
 
     // Load the shader programs
-    m_programID = LoadShaders("Shader//Texture.vertexshader", "Shader//Blending.fragmentshader");
+    m_programID = LoadShaders("Shader//Texture.vertexshader", "Shader//Text.fragmentshader");
     glUseProgram(m_programID);
 
     // Get a handle for our "MVP" uniform
@@ -80,6 +83,8 @@ void ICAA::Init()
     m_parameters[U_NUMLIGHTS] = glGetUniformLocation(m_programID, "numLights");
     m_parameters[U_COLOR_TEXTURE_ENABLED] = glGetUniformLocation(m_programID,"colorTextureEnabled");
     m_parameters[U_COLOR_TEXTURE] = glGetUniformLocation(m_programID,"colorTexture");
+	m_parameters[U_TEXT_ENABLED] = glGetUniformLocation(m_programID,"textEnabled");
+	m_parameters[U_TEXT_COLOR] = glGetUniformLocation(m_programID,"textColor");
 
     Mesh::SetMaterialLoc(m_parameters[U_MATERIAL_AMBIENT],
                          m_parameters[U_MATERIAL_DIFFUSE],
@@ -88,7 +93,7 @@ void ICAA::Init()
 
     // Initialise camera properties
     camera.init({0.f,0.f,0.f},{1.f,0.f,0.f});
-	cameratwo.init(&camtarget,1.f);
+	//cameratwo.init(&camtarget,1.f);
 
     // Init VBO here
     for (int i = 0; i < NUM_GEOMETRY; ++i)
@@ -117,6 +122,8 @@ void ICAA::Init()
     meshList[GEORALD]->textureID = LoadTGA("Image//jerald.tga");
     meshList[SKYSPHERE] = MeshBuilder::LoadMeshMTL("obj/skybox.obj","obj/skybox.mtl");
     meshList[SKYSPHERE]->textureID = LoadTGA("Image/skybox.tga");
+	meshList[TEXT] = MeshBuilder::GenerateText("text",16,16);
+	meshList[TEXT]->textureID = LoadTGA("Image/iosevka.tga");
 
     //meshList[GEO_SPHERE_BLUE] = MeshBuilder::GenerateSphere("Earth", Color(0.4f, 0.2f, 0.8f), 1.f, 12, 12);
     //meshList[GEO_SPHERE_GREY] = MeshBuilder::GenerateSphere("Moon", Color(0.5f, 0.5f, 0.5f), 1.f, 4, 4);
@@ -191,6 +198,9 @@ void ICAA::Update(double dt)
 {
     HandleKeyPress();
 
+	float temp = 1.f/dt;
+	fps = glm::round(temp*100.f) / 100.f;
+
     if (Input::GetInstance()->IsKeyDown('I'))
         light[0].position.z -= static_cast<float>(dt) * 5.f;
     if (Input::GetInstance()->IsKeyDown('K'))
@@ -204,8 +214,8 @@ void ICAA::Update(double dt)
     if (Input::GetInstance()->IsKeyDown('P'))
         light[0].position.y += static_cast<float>(dt) * 5.f;
 
-    //camera.update(dt);
-	cameratwo.update(dt);
+    camera.update(dt);
+	//cameratwo.update(dt);
 
 }
 
@@ -222,7 +232,8 @@ void ICAA::Render()
             camera.target.x, camera.target.y, camera.target.z,
             camera.up.x, camera.up.y, camera.up.z
     );*/
-	viewStack.LookAt(cameratwo.position,*cameratwo.looktarget,{0.f,1.f,0.f});
+	//viewStack.LookAt(cameratwo.position,*cameratwo.looktarget,{0.f,1.f,0.f});
+	viewStack.LookAt(camera.position,camera.target,camera.up);
 
     // Load identity matrix into the model stack
     modelStack.LoadIdentity();
@@ -263,6 +274,12 @@ void ICAA::Render()
     modelStack.Scale({2,2,2});
     RenderMesh(meshList[SKYSPHERE],true);
     modelStack.PopMatrix();
+
+	modelStack.PushMatrix();
+	modelStack.LoadIdentity();
+	RenderTextOnScreen(meshList[TEXT], "BREENSEERAYYANG", {1,1,1}, 64, 0, 0);
+	RenderTextOnScreen(meshList[TEXT], "FPS: " + std::to_string(fps),{1,1,1},64,0,1024-64);
+	modelStack.PopMatrix();
 }
 
 void ICAA::RenderMesh(Mesh* mesh, bool enableLight)
@@ -439,4 +456,72 @@ void ICAA::RenderGUI(Mesh* mesh, float x, float y, float scalex, float scaley)
     viewStack.PopMatrix();
     modelStack.PopMatrix();
     glEnable(GL_DEPTH_TEST);
+}
+
+void ICAA::RenderText(Mesh* mesh, const std::string& text, Color color)
+{
+	if (!mesh || mesh->textureID <= 0) return;
+	// Disable back face culling
+	glDisable(GL_CULL_FACE);
+	glUniform1i(m_parameters[U_TEXT_ENABLED], 1);
+	glUniform3fv(m_parameters[U_TEXT_COLOR], 1, &color.r);
+	glUniform1i(m_parameters[U_LIGHTENABLED], 0);
+	glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 1);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, mesh->textureID);
+	glUniform1i(m_parameters[U_COLOR_TEXTURE], 0);
+	for (unsigned i = 0; i < text.length(); ++i)
+	{
+		glm::mat4 characterSpacing = glm::translate(
+			glm::mat4(1.f),
+			glm::vec3(i * 1.0f, 0, 0));
+		glm::mat4 MVP = projectionStack.Top() * viewStack.Top() * modelStack.Top() * characterSpacing;
+		glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, glm::value_ptr(MVP));
+
+		mesh->Render((unsigned)text[i] * 6, 6);
+	}
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glUniform1i(m_parameters[U_TEXT_ENABLED], 0);
+	glEnable(GL_CULL_FACE);
+}
+
+void ICAA::RenderTextOnScreen(Mesh* mesh, const std::string& text, Color color, float size, float x, float y)
+{
+	if (!mesh || mesh->textureID <= 0) return;
+
+	glDisable(GL_DEPTH_TEST);
+	glm::mat4 ortho = glm::ortho(0.f, 1280.f, 0.f, 1024.f, -100.f, 100.f); // dimension of screen UI
+	projectionStack.PushMatrix();
+	projectionStack.LoadMatrix(ortho);
+	viewStack.PushMatrix();
+	viewStack.LoadIdentity(); //No need camera for ortho mode
+	modelStack.PushMatrix();
+	modelStack.LoadIdentity(); //Reset modelStack
+	modelStack.Translate(x, y, 0);
+	modelStack.Scale(size, size, size);
+	glUniform1i(m_parameters[U_TEXT_ENABLED], 1);
+	glUniform3fv(m_parameters[U_TEXT_COLOR], 1, &color.r);
+	glUniform1i(m_parameters[U_LIGHTENABLED], 0);
+	glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 1);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, mesh->textureID);
+	glUniform1i(m_parameters[U_COLOR_TEXTURE], 0);
+	for (unsigned i = 0; i < text.length(); ++i)
+	{
+		glm::mat4 characterSpacing = glm::translate(
+			glm::mat4(1.f),
+			glm::vec3(0.5f + i * 1.0f, 0.5f, 0)
+		);
+		glm::mat4 MVP = projectionStack.Top() * viewStack.Top() * modelStack.Top() * characterSpacing;
+		glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, glm::value_ptr(MVP));
+
+		mesh->Render((unsigned)text[i] * 6, 6);
+	}
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glUniform1i(m_parameters[U_TEXT_ENABLED], 0);
+	projectionStack.PopMatrix();
+	viewStack.PopMatrix();
+	modelStack.PopMatrix();
+
+	glEnable(GL_DEPTH_TEST);
 }

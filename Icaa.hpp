@@ -28,6 +28,7 @@ public:
         GEORALD,
         SKYSPHERE,
         HOUSE,
+		TEXT,
         NUM_GEOMETRY,
     };
 
@@ -55,6 +56,8 @@ public:
         U_COLOR_TEXTURE_ENABLED,
         U_COLOR_TEXTURE,
         U_LIGHTENABLED,
+		U_TEXT_ENABLED,
+		U_TEXT_COLOR,
         U_TOTAL,
     };
 
@@ -75,12 +78,16 @@ private:
     void RenderMesh(Mesh* mesh, bool enableLight);
     void RenderSkybox();
     void RenderGUI(Mesh* mesh, float x, float y, float scalex, float scaley);
+	void RenderText(Mesh* mesh, const std::string& text, Color color);
+	void RenderTextOnScreen(Mesh* mesh,	const std::string& text, Color color, float size, float x, float y);
 
     unsigned m_vertexArrayID;
     Mesh* meshList[NUM_GEOMETRY];
 
     unsigned m_programID;
     unsigned m_parameters[U_TOTAL];
+
+	float fps = 0;
 
     FPSCam camera;
     ThirdPersonCamera cameratwo;
