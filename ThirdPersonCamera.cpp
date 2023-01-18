@@ -13,10 +13,9 @@ void ThirdPersonCamera::update(double deltaTime)
 {
     static constexpr float ROTATE_SPEED = 10.f;
 
-    glm::vec3 view = glm::normalize(*looktarget-position);
+    glm::vec3 view = glm::normalize(position-*looktarget);
     glm::vec3 right = glm::normalize(glm::cross(view,up));
 
-    auto inputinst = Input::GetInstance();
     auto mouseinst = MouseController::GetInstance();
     double deltaX = mouseinst->GetMouseDeltaX();
     double deltaY = mouseinst->GetMouseDeltaY();
