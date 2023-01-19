@@ -17,11 +17,13 @@ int main()
         game.addPlayer("Bish",15);
         game.addPlayer("Bash",24);
         game.addPlayer("Bosh",22);
+		
+        game.list();
+		game.debugPrint();
+
+		game.removeByName("McLovin");
 
         game.list();
-
-        game.move("McLovin",20);
-
-        game.list();
+		game.debugPrint();
     }
 }
