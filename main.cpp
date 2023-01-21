@@ -1,29 +1,18 @@
-#include "PlayerTracker.hpp"
+#include "Program.hpp"
+
+#define EXAMPLE
 
 int main()
 {
-    {
-        PlayerTracker game;
-
-        game.addPlayer("McLovin",3);
-        game.addPlayer("Michael",5);
-        game.addPlayer("Fass",4);
-        game.addPlayer("Bender",6);
-        game.addPlayer("Hugh",12);
-        game.addPlayer("Jack",13);
-        game.addPlayer("Man",8);
-        game.addPlayer("Bingo",7);
-        game.addPlayer("Bango",9);
-        game.addPlayer("Bish",15);
-        game.addPlayer("Bash",24);
-        game.addPlayer("Bosh",22);
-		
-        game.list();
-		game.debugPrint();
-
-		game.removeByName("McLovin");
-
-        game.list();
-		game.debugPrint();
-    }
+#ifdef EXAMPLE
+	// Populates the minheap with example players
+	Program::populate();
+#endif
+	while (Program::shouldEnd())
+	{
+		Program::menu();
+		Program::query();
+		system("CLS");
+		Program::execute();
+	}
 }
