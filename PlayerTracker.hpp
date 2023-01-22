@@ -14,7 +14,6 @@ public:
     void list();
 	void debugPrint();
     void removeByName(const std::string& name);
-    void removeByDistance(const int& distance);
     void move(const std::string& name, int distance);
 };
 
