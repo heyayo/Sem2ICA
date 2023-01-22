@@ -66,7 +66,6 @@ void Program::query()
 	std::string input{};
 	getWord(input);
 	
-	// Could use std::map
 	for (auto& x : commands)
 	{if (input == x.a) {commandBuffer = x.b; return;}}
 	commandBuffer = list;
@@ -74,7 +73,7 @@ void Program::query()
 
 void Program::quit() {running = false;}
 bool Program::shouldEnd() { return running; }
-void Program::list() { game.list(); }
+void Program::list() { game.list();endLine;game.debugPrint(); }
 void Program::execute() { commandBuffer(); }
 
 void Program::populate()

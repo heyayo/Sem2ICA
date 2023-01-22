@@ -1,6 +1,6 @@
 #include "Program.hpp"
 
-#define EXAMPLE
+//#define EXAMPLE
 
 int main()
 {
@@ -12,7 +12,7 @@ int main()
 	{
 		Program::menu();
 		Program::query();
-		system("CLS");
+		//system("CLS");
 		Program::execute();
 	}
 }

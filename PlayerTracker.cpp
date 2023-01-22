@@ -10,7 +10,13 @@ void PlayerTracker::move(const std::string &name, int distance)
 {
     int index = heap.Find(Player(name),[](Player* a, Player* b){ return a->getName() == b->getName(); });
 	if (index < 0) return;
-    heap[index].setDistance(heap[index].getDistance()+distance);
+	int oldDistance = heap[index]->getDistance();
+    heap[index]->setDistance(heap[index]->getDistance()+distance);
+	if (heap.DuplicateCheck(index))
+	{
+		heap[index]->setDistance(oldDistance);
+		return;
+	}
 	heap.stabilize(index);
 }
 
