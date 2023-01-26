@@ -3,15 +3,19 @@
 include("dbconninc.php");
 // Prepare Statement (SQL query)
 
-$query = "SELECT username,level,xp,cash FROM tb_playerstats;";
+if (!isset($_POST["username"])) die("nosted");
+
+$username = $_POST["username"];
+
+$query = "SELECT level,xp,cash FROM tb_playerstats WHERE username = $username;";
 
 $stmt = $conn->prepare($query);
-$stmt->bind_result($username,$level,$xp,$cash);
+$stmt->bind_result($level,$xp,$cash);
 $stmt->execute();
 
 $stmt->fetch();
 $jsonarray = Array();
-$item = array("username" => $username, "level" => $level, "xp" => $xp, "cash" => $cash);
+$item = array("level" => $level, "xp" => $xp, "cash" => $cash);
 array_push($jsonarray,$item);
 
 http_response_code(200);

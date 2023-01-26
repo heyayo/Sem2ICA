@@ -1,0 +1,7 @@
+Connect To Database ! dbconnic
+Login ! LoginBackend
+Register ! RegisterBackend
+DeleteCurrentUser ! DeleteUserBackend
+ClearScores ! DeleteAllScores
+UpdatePlayerStats ! UpdatePlayerStatsBackend
+AddScore ! AddScoreBackend

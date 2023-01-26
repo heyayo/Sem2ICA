@@ -21,14 +21,8 @@ $query = "INSERT INTO tb_playerstats (username,level,xp,cash) values ('$sUsernam
 $stmt = $conn->prepare($query);
 $stmt->execute();
 echo "<p> Rows Added: $stmt->affected_rows";
-$stmt->close()
-
-$query = "INSERT INTO tb_leaderboard (username,score) values ('$sUsername',0);";
-$stmt->prepare($query);
-$stmt->execute();
-echo "<p> Rows Added: $stmt->affected_rows";
-
 $stmt->close();
+
 $conn->close();
 
 http_response_code(200);

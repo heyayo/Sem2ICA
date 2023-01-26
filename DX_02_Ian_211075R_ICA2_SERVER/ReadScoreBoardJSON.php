@@ -4,7 +4,7 @@ include("dbconninc.php");
 // Prepare Statement (SQL query)
 
 $query="select username,score from tb_leaderboard";
-$stmt=$conn->prepare($query);
+$stmt = $conn->prepare($query);
 // Execute Statement
 
 //Bind results to variables
