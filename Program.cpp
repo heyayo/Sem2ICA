@@ -73,7 +73,7 @@ void Program::query()
 
 void Program::quit() {running = false;}
 bool Program::shouldEnd() { return running; }
-void Program::list() { game.list();endLine;game.debugPrint(); }
+void Program::list() { game.list();endLine; }
 void Program::execute() { commandBuffer(); }
 
 void Program::populate()

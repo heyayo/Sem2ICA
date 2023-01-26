@@ -12,7 +12,11 @@ int main()
 	{
 		Program::menu();
 		Program::query();
-		//system("CLS");
+#ifdef _WIN32
+		system("CLS");
+#elif __linux__
+		system("clear");
+#endif
 		Program::execute();
 	}
 }
