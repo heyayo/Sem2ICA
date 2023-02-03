@@ -12,10 +12,7 @@ $stmt->bind_result($sPlayerName);
 $stmt->execute();
 $stmt->store_result();
 
-$jsonarray = Array();
 $stmt->fetch();
-$item = array("username" => $sPlayerName);
-array_push($jsonarray,$item);
 $rows = $stmt->num_rows();
 
 http_response_code(200);

@@ -13,7 +13,7 @@ public static class GlobalStuffs {
     
     public static string baseURL="http://localhost:8000/"; //rename this to your server path
     static string addscorebackendURL=baseURL+"AddScoreBackend.php";
-    static string ReadSBJSONURL=baseURL+"ReadScoreboardJSON.php";
+    static string ReadSBJSONURL=baseURL+"ReadScoreBoardJSON.php";
     static string DeleteAllScoreURL=baseURL+"DeleteAllScores.php";
     static string UpdatePlayerStatsURL=baseURL+"UpdatePlayerStatsBackend.php";
     static string DeleteUserURL=baseURL+"DeleteUserBackend.php";

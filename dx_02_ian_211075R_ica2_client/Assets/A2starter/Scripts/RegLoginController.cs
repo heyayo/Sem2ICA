@@ -85,6 +85,10 @@ public class RegLoginController : MonoBehaviour
                 //displayTxt.text=Deserialize(webRequest.downloadHandler.text); //added
                 PlayerStats ps = PlayerStats.CreateFromJSON(webRequest.downloadHandler.text);
                 displayTxt.text = "Username:" + ps.username + "\nXP:" + ps.xp + "\nLevel:" + ps.level + "\nCash:" + ps.cash;
+                Debug.Log(displayTxt.text);
+                Debug.Log(ps.level);
+                Debug.Log(ps.cash);
+                Debug.Log(ps.xp);
                 GlobalStuffs.username = ps.username;
                 GlobalStuffs.xp = ps.xp;
                 GlobalStuffs.level = ps.level;

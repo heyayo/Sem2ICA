@@ -5,3 +5,4 @@ DeleteCurrentUser ! DeleteUserBackend
 ClearScores ! DeleteAllScores
 UpdatePlayerStats ! UpdatePlayerStatsBackend
 AddScore ! AddScoreBackend
+GetScoreboard
