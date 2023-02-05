@@ -10,6 +10,7 @@ public static class GlobalStuffs {
     public static int cash=0;
     public static int level=1;
     public static int timesPlayed=0;
+    public static float finishTime=0;
 
     
     public static string baseURL="http://localhost:8000/"; //rename this to your server path
@@ -23,6 +24,7 @@ public static class GlobalStuffs {
         WWWForm form=new WWWForm();
         form.AddField("sPlayerName",pname);
         form.AddField("iScore",score);
+        form.AddField("finish",finishTime);
         UnityWebRequest webreq=UnityWebRequest.Post(addscorebackendURL,form);
         yield return webreq.SendWebRequest();
         switch (webreq.result)
@@ -82,7 +84,7 @@ public static class GlobalStuffs {
         for(int a=0;a<sb.scores.Count;a++){
             OneScore oneScore=sb.scores[a];
             //Debug.Log(oneScore.username+" : "+oneScore.score);
-            ddata+=(oneScore.username+" : "+oneScore.score+ " : " + oneScore.recordDate + "\n");
+            ddata+=(oneScore.username+" : "+oneScore.score+ " : " + oneScore.recordDate + " : " + oneScore.finishTime + "\n");
         }
 
         return ddata;
@@ -141,6 +143,7 @@ class OneScore {
     public string username;
     public int score;
     public string recordDate; 
+    public float finishTime;
 }
 [Serializable]
 class ScoreList {

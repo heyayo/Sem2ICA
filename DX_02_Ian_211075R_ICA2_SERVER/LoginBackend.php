@@ -8,7 +8,6 @@ $username = $_POST["sUsername"];
 $query = "SELECT username FROM tb_users WHERE password = '$password' and username = '$username';";
 $stmt = $conn->prepare($query);
 
-$stmt->bind_result($sPlayerName);
 $stmt->execute();
 $stmt->store_result();
 

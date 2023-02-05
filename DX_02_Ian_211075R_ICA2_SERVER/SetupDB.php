@@ -21,7 +21,8 @@ CREATE TABLE tb_playerstats (
 CREATE TABLE tb_leaderboard (
             username varchar(100) NOT NULL,
             score int NOT NULL,
-            recordDate date NOT NULL
+            recordDate date NOT NULL,
+            finishTime float NOT NULL
 );
 "];
 foreach($query as $a){

@@ -8,23 +8,31 @@ $sUsername = $_POST["sUsername"];
 $sPassword = $_POST["sPassword"];
 $sEmail = $_POST["sEmail"];
 
-echo "Received Info: $sUsername | $sPassword | $sEmail";
+$query = "SELECT username,email FROM tb_users WHERE username = '$sUsername' or email = '$sEmail';";
+$stmt = $conn->prepare($query);
+$stmt->execute();
+$stmt->store_result();
+$stmt->fetch();
+$rows = $stmt->num_rows();
+if ($rows > 0)
+{
+    die("Username Or Email Taken");
+}
 
 $query = "INSERT INTO tb_users (username,password,email) values (?,?,?);";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("sss",$sUsername,$sPassword,$sEmail);
 $stmt->execute();
-echo "<p> Rows Added: $stmt->affected_rows";
 $stmt->close();
 
 $query = "INSERT INTO tb_playerstats (username,level,xp,cash,timesPlayed) values ('$sUsername',0,0,0,0);";
 $stmt = $conn->prepare($query);
 $stmt->execute();
-echo "<p> Rows Added: $stmt->affected_rows";
 $stmt->close();
 
 $conn->close();
 
+echo "Registed As $sUsername";
 http_response_code(200);
 
 ?>
