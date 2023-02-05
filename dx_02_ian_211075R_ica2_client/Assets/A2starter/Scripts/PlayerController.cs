@@ -45,7 +45,7 @@ public class PlayerController : MonoBehaviour {
 		speed=GlobalStuffs.level*5+5;
 	}
 	void RefreshPlayerStats(){
-		TMPUGUI_playerStats.text="Player Stats\nName:"+GlobalStuffs.username+"\nLevel:"+GlobalStuffs.level+"\nXP:"+GlobalStuffs.xp+"\nCoins:"+GlobalStuffs.cash;
+		TMPUGUI_playerStats.text="Player Stats\nName:"+GlobalStuffs.username+"\nLevel:"+GlobalStuffs.level+"\nXP:"+GlobalStuffs.xp+"\nCash:"+GlobalStuffs.cash+"\nTimes Played:"+GlobalStuffs.timesPlayed;
 	}
 
 	// Each physics step..
@@ -134,6 +134,7 @@ public class PlayerController : MonoBehaviour {
 		isRunning=false;
 		winPanel.SetActive(true);
 		GlobalStuffs.xp+=count;
+		GlobalStuffs.timesPlayed += 1;
 		rb.velocity=Vector3.zero;
 		rb.angularVelocity=Vector3.zero;
 		TMPUGUI_LastScore.text="LastScore:"+count;

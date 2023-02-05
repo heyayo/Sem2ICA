@@ -9,12 +9,9 @@ $newxp = $_POST["newxp"];
 $newlevel = $_POST["newlevel"];
 $newcash = $_POST["newcash"];
 
-$query = "UPDATE tb_playerstats SET level = $newlevel, xp = $newxp, cash = $newcash WHERE username = '$username'";
+$query = "UPDATE tb_playerstats SET level = $newlevel, xp = $newxp, cash = $newcash, timesPlayed = timesPlayed + 1 WHERE username = '$username'";
 $stmt = $conn->prepare($query);
 $stmt->execute();
-
-echo $stmt->affected_rows;
-echo "UPDATED";
 
 http_response_code(200);
 $stmt->close();

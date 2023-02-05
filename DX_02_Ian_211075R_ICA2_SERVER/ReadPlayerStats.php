@@ -9,8 +9,8 @@ $username = $_POST["username"];
 $query = "SELECT level,xp,cash FROM tb_playerstats WHERE username = '$username';";
 $stmt = $conn->prepare($query);
 
-$stmt->bind_result($level,$xp,$cash);
 $stmt->execute();
+$stmt->bind_result($level,$xp,$cash);
 $stmt->fetch();
 
 echo "Username: $username | Level: $level | XP: $xp | Cash: $cash";

@@ -15,11 +15,13 @@ CREATE TABLE tb_playerstats (
         Username VARCHAR(100) NOT NULL,
         Level INT,
         XP INT,
-        cash INT);"
+        cash INT,
+        timesPlayed INT);"
         ,"
 CREATE TABLE tb_leaderboard (
             username varchar(100) NOT NULL,
-            score int NOT NULL
+            score int NOT NULL,
+            recordDate date NOT NULL
 );
 "];
 foreach($query as $a){

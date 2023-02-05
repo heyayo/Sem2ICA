@@ -7,23 +7,21 @@ if (!isset($_POST["username"])) die("nosted");
 
 $username = $_POST["username"];
 
-$query = "SELECT level,xp,cash FROM tb_playerstats WHERE username = '$username';";
+$query = "SELECT level,xp,cash,timesPLayed FROM tb_playerstats WHERE username = '$username';";
 
 $stmt = $conn->prepare($query);
 $stmt->execute();
-$stmt->bind_result($level,$xp,$cash);
+$stmt->bind_result($level,$xp,$cash,$timesPlayed);
 
 $stmt->fetch();
-$jsonarray = Array();
-$jsonarray[''] = Array();
-$item = array("username" => $username, "level" => $level, "xp" => $xp, "cash" => $cash);
-array_push($jsonarray[''],$item);
+$item = array("username" => $username, "xp" => $xp, "level" => $level, "cash" => $cash, "timesPlayed" => $timesPlayed);
+//array_push($jsonarray,$item);
 
-http_response_code(200);
-echo json_encode($jsonarray);
+echo json_encode($item);
 
 $stmt->close();
 $conn->close();
 
+http_response_code(200);
 ?>
 

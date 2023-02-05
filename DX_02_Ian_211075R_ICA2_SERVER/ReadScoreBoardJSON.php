@@ -3,22 +3,24 @@
 include("dbconninc.php");
 // Prepare Statement (SQL query)
 
-$query="select username,score from tb_leaderboard";
+$query="SELECT username,score,recordDate FROM tb_leaderboard ORDER BY score DESC";
 $stmt = $conn->prepare($query);
 // Execute Statement
 
 //Bind results to variables
-$stmt->bind_result($sPlayerName,$iScore);
 $stmt->execute();
+$stmt->bind_result($sPlayerName,$iScore,$recordDate);
 // Fetch Results (select)
 $jsonarray = Array();
+$jsonarray["scores"] = Array();
 while($stmt->fetch()){
-	$item = array("username" => $sPlayerName, "score" => $iScore);
-	array_push($jsonarray,$item);
+	$item = Array("username" => $sPlayerName, "score" => $iScore, "recordDate" => $recordDate);
+	array_push($jsonarray["scores"],$item);
 }
 http_response_code(200);
 echo json_encode($jsonarray);
 $stmt->close();
 // Close connection
 $conn->close();
+
 ?>

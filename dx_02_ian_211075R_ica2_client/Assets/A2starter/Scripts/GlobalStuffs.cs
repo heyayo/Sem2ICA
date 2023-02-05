@@ -9,6 +9,7 @@ public static class GlobalStuffs {
     public static int xp=0;
     public static int cash=0;
     public static int level=1;
+    public static int timesPlayed=0;
 
     
     public static string baseURL="http://localhost:8000/"; //rename this to your server path
@@ -27,14 +28,14 @@ public static class GlobalStuffs {
         switch (webreq.result)
             {
                 case UnityWebRequest.Result.Success:
-                    Debug.Log(":\nReceived: " + webreq.downloadHandler.text);
+                    //Debug.Log(":\nReceived: " + webreq.downloadHandler.text);
                     //GetScoreBoard();
                     break;
                 default:
                     Debug.Log("error");
                     break;
             }
-            webreq.Dispose();            
+            webreq.Dispose();
     }
     
     public static IEnumerator GetScoreBoard(Text txtSB)
@@ -80,8 +81,8 @@ public static class GlobalStuffs {
         string ddata="Leaderboard:\n";               
         for(int a=0;a<sb.scores.Count;a++){
             OneScore oneScore=sb.scores[a];
-            Debug.Log(oneScore.username+" : "+oneScore.score);
-            ddata+=(oneScore.username+" : "+oneScore.score+"\n");
+            //Debug.Log(oneScore.username+" : "+oneScore.score);
+            ddata+=(oneScore.username+" : "+oneScore.score+ " : " + oneScore.recordDate + "\n");
         }
 
         return ddata;
@@ -127,7 +128,6 @@ public static class GlobalStuffs {
             }
         }
         //webreq.Dispose();
-            
     }
 }
 
@@ -139,7 +139,8 @@ public static class GlobalStuffs {
 [Serializable]
 class OneScore {
     public string username;
-    public int score;    
+    public int score;
+    public string recordDate; 
 }
 [Serializable]
 class ScoreList {

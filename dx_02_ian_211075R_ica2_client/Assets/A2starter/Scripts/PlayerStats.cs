@@ -7,6 +7,7 @@ public class PlayerStats
     public int xp;
     public int level;
     public int cash;
+    public int timesPlayed;
 
     public static PlayerStats CreateFromJSON(string jsonString)
     {

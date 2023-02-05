@@ -17,7 +17,7 @@ $stmt->execute();
 echo "<p> Rows Added: $stmt->affected_rows";
 $stmt->close();
 
-$query = "INSERT INTO tb_playerstats (username,level,xp,cash) values ('$sUsername',0,0,0);";
+$query = "INSERT INTO tb_playerstats (username,level,xp,cash,timesPlayed) values ('$sUsername',0,0,0,0);";
 $stmt = $conn->prepare($query);
 $stmt->execute();
 echo "<p> Rows Added: $stmt->affected_rows";

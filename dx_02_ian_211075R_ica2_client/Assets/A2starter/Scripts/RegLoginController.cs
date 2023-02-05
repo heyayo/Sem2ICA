@@ -4,6 +4,8 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
+using System.Net;
+using System.Net.Sockets;
 
 public class RegLoginController : MonoBehaviour
 {
@@ -35,7 +37,8 @@ public class RegLoginController : MonoBehaviour
                     GlobalStuffs.xp = 0;
                     GlobalStuffs.cash = 0;
                     StartCoroutine(GetPlayerStats(if_loginusername.text));
-                    SceneManager.LoadScene("GameScn");
+                    //GetPlayerStats(if_loginusername.text);
+                    //SceneManager.LoadScene("GameScn");
                 }
                 break;
             default:
@@ -86,13 +89,11 @@ public class RegLoginController : MonoBehaviour
                 PlayerStats ps = PlayerStats.CreateFromJSON(webRequest.downloadHandler.text);
                 displayTxt.text = "Username:" + ps.username + "\nXP:" + ps.xp + "\nLevel:" + ps.level + "\nCash:" + ps.cash;
                 Debug.Log(displayTxt.text);
-                Debug.Log(ps.level);
-                Debug.Log(ps.cash);
-                Debug.Log(ps.xp);
                 GlobalStuffs.username = ps.username;
                 GlobalStuffs.xp = ps.xp;
                 GlobalStuffs.level = ps.level;
                 GlobalStuffs.cash = ps.cash;
+                GlobalStuffs.timesPlayed = ps.timesPlayed;
                 SceneManager.LoadScene("GameScn");
 
                 break;

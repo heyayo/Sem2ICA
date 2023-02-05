@@ -539,7 +539,7 @@ ScriptsOnlyBuild:
     className: UnityOnControllerColliderHitMessageListener
   - hash:
       serializedVersion: 2
-      Hash: da4cc51a02ce84afe2cecd27cfe6997a
+      Hash: 27ec3360f0c0a6803ba71cc3106480b8
     assemblyName: Unity.TextMeshPro.dll
     namespaceName: TMPro
     className: TextMeshPro
@@ -1063,4 +1063,4 @@ ScriptsOnlyBuild:
   scenePathNames:
   - Assets/A2starter/Scenes/MainScn.unity
   - Assets/A2starter/Scenes/GameScn.unity
-  playerPath: /home/bird/school/21DX/unity/dx_02_ian_211075R_ica2/game/game
+  playerPath: F:/School Stuff/DX1121/Sem2ICA/DX_02_Ian_211075R_ICA2_SERVER/game
