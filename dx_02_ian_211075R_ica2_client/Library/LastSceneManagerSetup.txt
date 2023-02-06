@@ -1,5 +1,0 @@
-sceneSetups:
-- path: Assets/DX_02_Ian_211075R_ICA2/Scenes/MainScn.unity
-  isLoaded: 1
-  isActive: 1
-  isSubScene: 0

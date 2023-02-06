@@ -32,7 +32,6 @@ $stmt->execute();
 $stmt->close();
 
 http_response_code(200);
-$stmt->close();
 $conn->close();
 
 ?>
