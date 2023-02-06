@@ -21,6 +21,9 @@ $stmt->fetch();
 $rows = $stmt->num_rows();
 $stmt->close();
 
+echo "$bestTime<br>";
+echo "$fTime<br>";
+
 if ($rows == 0)
 {
     $query = "INSERT INTO tb_leaderboard (username,score,recordDate,finishTime) values ('$username',$score,(SELECT NOW()),$fTime);";
@@ -32,7 +35,7 @@ else
 {
     if ($score > $bestscore)
     {
-        if ($bestTime > $fTime)
+        if ($bestTime < $fTime)
         {
             $query = "UPDATE tb_leaderboard SET score = $score, finishTime = $fTime, recordDate = (SELECT NOW()) WHERE username = '$username'";
         }else
@@ -42,7 +45,7 @@ else
         $stmt = $conn->prepare($query);
         $stmt->execute();
         $stmt->close();
-    } else if ($bestTime > $fTime)
+    } else if ($bestTime < $fTime)
     {
         $query = "UPDATE tb_leaderboard SET finishTime = $fTime, recordDate = (SELECT NOW()) WHERE username = '$username'";
         $stmt = $conn->prepare($query);

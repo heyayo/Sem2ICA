@@ -14,7 +14,7 @@ $stmt->bind_result($sPlayerName,$iScore,$recordDate, $finish);
 $jsonarray = Array();
 $jsonarray["scores"] = Array();
 while($stmt->fetch()){
-	$item = Array("username" => $sPlayerName, "score" => $iScore, "recordDate" => $recordDate, "time" => $finish);
+	$item = Array("username" => $sPlayerName, "score" => $iScore, "recordDate" => $recordDate, "finishTime" => $finish);
 	array_push($jsonarray["scores"],$item);
 }
 http_response_code(200);

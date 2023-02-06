@@ -2,14 +2,15 @@
 // Connect database
 include("dbconninc.php");
 // Prepare Statement (SQL query)
-if (!isset($_POST["username"]) || !isset($_POST["newxp"]) || !isset($_POST["newlevel"]) || !isset($_POST["newcash"])) die("nosted");
+if (!isset($_POST["username"]) || !isset($_POST["newxp"]) || !isset($_POST["newlevel"]) || !isset($_POST["newcash"]) || !isset($_POST["prestige"])) die("nosted");
 
 $username = $_POST["username"];
 $newxp = $_POST["newxp"];
 $newlevel = $_POST["newlevel"];
 $newcash = $_POST["newcash"];
+$newprestige = $_POST["prestige"];
 
-$query = "UPDATE tb_playerstats SET level = $newlevel, xp = $newxp, cash = $newcash, timesPlayed = timesPlayed + 1 WHERE username = '$username'";
+$query = "UPDATE tb_playerstats SET level = $newlevel, xp = $newxp, cash = $newcash, timesPlayed = timesPlayed + 1, Prestige = $newprestige WHERE username = '$username'";
 $stmt = $conn->prepare($query);
 $stmt->execute();
 

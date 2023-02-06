@@ -7,6 +7,7 @@ ScriptsOnlyBuild:
     - RegLoginController
     - Rotator
     Unity.Rider.Editor.dll:
+    - Packages.Rider.Editor.RiderScriptEditorData
     - Packages.Rider.Editor.UnitTesting.CallbackData
     Unity.TextMeshPro.dll:
     - TMPro.TMP_FontAsset
@@ -83,13 +84,31 @@ ScriptsOnlyBuild:
     methodName: OnButtonLogin
   - assembly: Assembly-CSharp
     fullTypeName: PlayerController
+    methodName: OpenLeaderboard
+  - assembly: Assembly-CSharp
+    fullTypeName: PlayerController
+    methodName: OpenStore
+  - assembly: Assembly-CSharp
+    fullTypeName: PlayerController
+    methodName: PauseGame
+  - assembly: Assembly-CSharp
+    fullTypeName: PlayerController
     methodName: BacktoMain
+  - assembly: Assembly-CSharp
+    fullTypeName: PlayerController
+    methodName: Prestige
   - assembly: Assembly-CSharp
     fullTypeName: PlayerController
     methodName: Replay
   - assembly: Assembly-CSharp
     fullTypeName: PlayerController
     methodName: ClearScores
+  - assembly: Assembly-CSharp
+    fullTypeName: PlayerController
+    methodName: buyTime
+  - assembly: Assembly-CSharp
+    fullTypeName: PlayerController
+    methodName: buyScores
   - assembly: Assembly-CSharp
     fullTypeName: PlayerController
     methodName: OnDeleteUser
@@ -779,7 +798,7 @@ ScriptsOnlyBuild:
     className: GroupTrack
   - hash:
       serializedVersion: 2
-      Hash: cd32bfe0c2b4ad96d5092a7524a82933
+      Hash: 45225f8360439e3921bb4f7a812a0ddd
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayerController

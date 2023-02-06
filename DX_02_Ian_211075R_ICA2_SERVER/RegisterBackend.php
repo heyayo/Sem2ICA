@@ -25,7 +25,7 @@ $stmt->bind_param("sss",$sUsername,$sPassword,$sEmail);
 $stmt->execute();
 $stmt->close();
 
-$query = "INSERT INTO tb_playerstats (username,level,xp,cash,timesPlayed) values ('$sUsername',0,0,0,0);";
+$query = "INSERT INTO tb_playerstats (username,level,xp,cash,timesPlayed,Prestige) values ('$sUsername',0,0,0,0,0);";
 $stmt = $conn->prepare($query);
 $stmt->execute();
 $stmt->close();

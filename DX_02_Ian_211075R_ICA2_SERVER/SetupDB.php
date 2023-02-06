@@ -14,6 +14,7 @@ CREATE TABLE tb_users (
 CREATE TABLE tb_playerstats (
         Username VARCHAR(100) NOT NULL,
         Level INT,
+        Prestige INT,
         XP INT,
         cash INT,
         timesPlayed INT);"

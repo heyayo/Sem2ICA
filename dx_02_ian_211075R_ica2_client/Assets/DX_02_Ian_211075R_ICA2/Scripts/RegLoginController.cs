@@ -1,0 +1,148 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using TMPro;
+using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
+using System.Net;
+using System.Net.Sockets;
+
+public class RegLoginController : MonoBehaviour
+{
+    string URLLoginBackend = GlobalStuffs.baseURL + "LoginBackend.php";
+    string URLRegBackend = GlobalStuffs.baseURL + "RegisterBackend.php";
+    string URLReadPlayerStats = GlobalStuffs.baseURL + "ReadPlayerStatsJSON.php";
+    public TextMeshProUGUI displayTxt; //must add using UnityEngine.UI
+    public TMP_InputField if_regusername, if_regpassword, if_regemail; //to link to the inpufields
+    public TMP_InputField if_loginusername, if_loginpassword; //to link to the inpufields
+    public void OnButtonLogin()
+    { //to be invoked by button click
+        StartCoroutine(DoLogin());
+    }
+    IEnumerator DoLogin()
+    {
+        if (if_loginusername.text.Length == 0)
+        {
+            displayTxt.text = "No Username Entered";
+            yield break;
+        }
+
+        if (if_loginpassword.text.Length == 0)
+        {
+            displayTxt.text = "No Password Entered";
+            yield break;
+        }
+        WWWForm form = new WWWForm();
+        form.AddField("sUsername", if_loginusername.text);
+        form.AddField("sPassword", if_loginpassword.text);
+        UnityWebRequest webreq = UnityWebRequest.Post(URLLoginBackend, form);
+        yield return webreq.SendWebRequest();
+        switch (webreq.result)
+        {
+            case UnityWebRequest.Result.Success:
+                displayTxt.text = webreq.downloadHandler.text;
+                if (webreq.downloadHandler.text == "LOGIN SUCCESS")
+                {
+                    //Debug.Log("Load new Scene");
+                    GlobalStuffs.username = if_loginusername.text;
+                    GlobalStuffs.xp = 0;
+                    GlobalStuffs.cash = 0;
+                    StartCoroutine(GetPlayerStats(if_loginusername.text));
+                    //GetPlayerStats(if_loginusername.text);
+                    //SceneManager.LoadScene("GameScn");
+                }
+                break;
+            default:
+                displayTxt.text = "server error";
+                break;
+        }
+        webreq.Dispose();
+    }
+    public void OnButtonRegister()
+    { //to be invoked by button click
+      StartCoroutine(DoRegister());
+    }
+    IEnumerator DoRegister()
+    {
+        if (if_regusername.text.Length == 0)
+        {
+            displayTxt.text = "No Username Entered";
+            yield break;
+        }
+        if (if_regusername.text.Length < 3)
+        {
+            displayTxt.text = "Username Must Be At Least 3 Letters Long";
+            yield break;
+        }
+        if (if_regpassword.text.Length == 0)
+        {
+            displayTxt.text = "No Password Entered";
+            yield break;
+        }
+        if (if_regpassword.text.Length < 3)
+        {
+            displayTxt.text = "Password Must Be At Least 3 Letters Long";
+            yield break;
+        }
+        WWWForm form = new WWWForm();
+        form.AddField("sUsername", if_regusername.text);
+        form.AddField("sPassword", if_regpassword.text);
+        form.AddField("sEmail", if_regemail.text);
+        UnityWebRequest webreq = UnityWebRequest.Post(URLRegBackend, form);
+        yield return webreq.SendWebRequest();
+        switch (webreq.result)
+        {
+            case UnityWebRequest.Result.Success:
+                displayTxt.text = webreq.downloadHandler.text;
+                break;
+            default:
+                displayTxt.text = "server error";
+                break;
+        }
+        webreq.Dispose();
+    }
+
+    IEnumerator GetPlayerStats(string playername)
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("username", playername);
+        UnityWebRequest webRequest = UnityWebRequest.Post(URLReadPlayerStats, form);
+
+        // Request and wait for the desired page.
+        yield return webRequest.SendWebRequest();
+
+        switch (webRequest.result)
+        {
+            case UnityWebRequest.Result.Success:
+                //Debug.Log("Received: " + webRequest.downloadHandler.text);
+                displayTxt.text = "RawData:\n" + webRequest.downloadHandler.text + "\n";
+                //displayTxt.text=Deserialize(webRequest.downloadHandler.text); //added
+                PlayerStats ps = PlayerStats.CreateFromJSON(webRequest.downloadHandler.text);
+                displayTxt.text = "Username:" + ps.username + "\nXP:" + ps.xp + "\nLevel:" + ps.level + "\nCash:" + ps.cash;
+                //Debug.Log(displayTxt.text);
+                GlobalStuffs.username = ps.username;
+                GlobalStuffs.xp = ps.xp;
+                GlobalStuffs.level = ps.level;
+                GlobalStuffs.cash = ps.cash;
+                GlobalStuffs.timesPlayed = ps.timesPlayed;
+                GlobalStuffs.PrestigeLevel = ps.prestige;
+                SceneManager.LoadScene("GameScn");
+
+                break;
+            default:
+                displayTxt.text = "server error";
+                break;
+        }
+        webRequest.Dispose();
+    }
+    public void GuestLogin()
+    {
+        if (if_loginusername.text.Length != 0)
+        {
+            GlobalStuffs.username = if_loginusername.text;
+        }
+        SceneManager.LoadScene("GameScn");
+    }
+
+
+}
