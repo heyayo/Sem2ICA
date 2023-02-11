@@ -63,6 +63,17 @@ void ElasticCollisionResponse(GameObject& a, GameObject& b)
 	b1.setVY(v_v1nPrime.y() + v_v1tPrime.y());
 	b2.setVX(v_v2nPrime.x() + v_v2tPrime.x());
 	b2.setVY(v_v2nPrime.y() + v_v2tPrime.y());*/
+	a.oldVel = a.vel;
+	b.oldVel = b.vel;
+	/*a.vel = (v_v1nPrime - v_v2nPrime) + v_v1tPrime;
+	b.vel = (v_v2nPrime - v_v1nPrime) + v_v2tPrime;*/
 	a.vel = (v_v1nPrime + v_v1tPrime);
 	b.vel = (v_v2nPrime + v_v2tPrime);
+
+	float dotA = (a.vel - a.oldVel).Dot(a.change);
+	float dotB = (b.vel - b.oldVel).Dot(b.change);
+	if (dotA < 0)
+		a.pos -= a.change;
+	if (dotB < 0)
+		b.pos -= b.change;
 }
