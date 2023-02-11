@@ -1,1 +1,0 @@
-add_library(CommonLibrary timer.cpp Vector3.cpp Mtx44.cpp MatrixStack.cpp)
